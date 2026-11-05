@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import GerenciarVisitasUsuarios from '../pages/GerenciarVisitasUsuarios/GerenciarVisitasUsuarios';
 import Tutorial from '../pages/Tutorial/Tutorial';
 import Cadastro from '../pages/Cadastro/Cadastro';
 import Login from '../pages/Login/Login';
@@ -26,6 +27,11 @@ const AppRoutes = () => (
       <Route path="/admin/resgates" element={<PrivateRoute adminOnly><ConsultarResgatesAdmin /></PrivateRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     <Route path="/admin/ranking" element={<PrivateRoute adminOnly><Ranking /></PrivateRoute>} />
+      <Route 
+  path="/admin/visitas-usuarios" 
+  element={<PrivateRoute adminOnly><GerenciarVisitasUsuarios /></PrivateRoute>} 
+/>
+
     </Routes>
   </BrowserRouter>
 );

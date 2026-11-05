@@ -1,0 +1,281 @@
+.pageWrapper {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 20px;
+}
+
+.title {
+  margin-top: 24px;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #005ca9;
+  font-weight: 700;
+}
+
+.loadingAlert {
+  padding: 16px;
+  background-color: #e6f0fa;
+  color: #005ca9;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.errorBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  background-color: #fde8e8;
+  border: 1px solid #f8b4b4;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.errorText {
+  margin: 0;
+  color: #e30613;
+  font-weight: 600;
+}
+
+.retryButton {
+  padding: 8px 18px;
+  background-color: #005ca9;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.retryButton:hover {
+  background-color: #004587;
+}
+
+.emptyState {
+  padding: 24px;
+  text-align: center;
+  color: #718096;
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 1px dashed #cbd5e0;
+  font-style: italic;
+}
+
+.layoutGrid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.painelUsuarios {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.buscaBox {
+  margin-bottom: 4px;
+}
+
+.inputBusca {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #cccccc;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inputBusca:focus {
+  border-color: #005ca9;
+  box-shadow: 0 0 0 3px rgba(0, 92, 169, 0.15);
+}
+
+.listaUsuarios {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.itemUsuario {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.itemUsuario:hover {
+  border-color: #005ca9;
+  background-color: #f0f7ff;
+}
+
+.itemUsuarioAtivo {
+  border-color: #005ca9;
+  background-color: #e6f0fa;
+  box-shadow: 0 2px 6px rgba(0, 92, 169, 0.15);
+}
+
+.usuarioInfoMain {
+  display: flex;
+  flex-direction: column;
+}
+
+.usuarioNome {
+  font-weight: 700;
+  color: #1a1a1a;
+  font-size: 0.95rem;
+}
+
+.usuarioEmail {
+  font-size: 0.825rem;
+  color: #64748b;
+  word-break: break-all;
+}
+
+.usuarioCpf {
+  font-size: 0.775rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.painelVisitas {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  min-height: 300px;
+}
+
+.placeholderSelecao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+  color: #718096;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+.detalhesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.usuarioHeaderCard {
+  background-color: #f8fafc;
+  padding: 16px;
+  border-radius: 6px;
+  border-left: 4px solid #005ca9;
+}
+
+.usuarioHeaderNome {
+  margin: 0 0 8px 0;
+  font-size: 1.2rem;
+  color: #1a1a1a;
+}
+
+.usuarioHeaderMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.subtituloVisitas {
+  margin: 8px 0 0 0;
+  font-size: 1.05rem;
+  color: #005ca9;
+  font-weight: 700;
+}
+
+.listaVisitas {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cardVisita {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: box-shadow 0.2s ease;
+}
+
+.cardVisita:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.visitaHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.salaNome {
+  font-weight: 700;
+  color: #1a1a1a;
+  font-size: 0.95rem;
+}
+
+.badgePontos {
+  background-color: #005ca9;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.visitaDetalhes {
+  display: flex;
+  gap: 16px;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  .layoutGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .listaUsuarios {
+    max-height: 250px;
+  }
+}

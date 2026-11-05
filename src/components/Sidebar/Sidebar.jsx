@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { MapPin, LogOut, X, ArrowLeft } from 'lucide-react'; // Alterado: adicionado ArrowLeft (ícone do botão "Voltar")
+import { MapPin, LogOut, X, ArrowLeft, Users } from 'lucide-react';
 import styles from './Sidebar.module.css';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -27,7 +27,6 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   return (
     <>
-      
       <div className={`${styles.overlay} ${isOpen ? styles.overlayOpen : ''}`} onClick={onClose} aria-hidden="true" />
 
       <aside id="sidebar-menu" className={`${styles.sidebar} ${isOpen ? styles.open : ''}`} aria-label="Menu lateral">
@@ -46,6 +45,15 @@ const Sidebar = ({ isOpen, onClose }) => {
             <span>Salas Visitadas</span>
           </Link>
 
+          <NavLink 
+            to="/admin/visitas-usuarios" 
+            onClick={onClose}
+            className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}
+          >
+            <Users size={20} className={styles.menuIcon} />
+            <span>Visitas por Usuário</span>
+          </NavLink>
+
           {isSalasVisitas && (
             <Link to="/home" onClick={onClose} className={`${styles.menuItem} ${styles.backItem}`}>
               <ArrowLeft size={20} className={styles.menuIcon} />
@@ -54,7 +62,6 @@ const Sidebar = ({ isOpen, onClose }) => {
           )}
         </nav>
 
-      
         <div className={styles.footer}>
           <button type="button" className={styles.logoutBtn} onClick={handleLogout}>
             <LogOut size={20} />
@@ -65,4 +72,5 @@ const Sidebar = ({ isOpen, onClose }) => {
     </>
   );
 };
+
 export default Sidebar;
