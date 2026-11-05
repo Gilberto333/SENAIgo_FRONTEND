@@ -10,6 +10,7 @@ import GerenciarLoja from '../pages/GerenciarLoja/GerenciarLoja';
 import GerenciarSalas from '../pages/GerenciarSalas/GerenciarSalas';
 import ConsultarResgatesAdmin from '../pages/ConsultarResgatesAdmin/ConsultarResgatesAdmin';
 import PrivateRoute from './PrivateRoute';
+import Ranking from '../pages/Ranking/Ranking';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -24,6 +25,7 @@ const AppRoutes = () => (
       <Route path="/admin/salas" element={<PrivateRoute adminOnly><GerenciarSalas /></PrivateRoute>} />
       <Route path="/admin/resgates" element={<PrivateRoute adminOnly><ConsultarResgatesAdmin /></PrivateRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
+    <Route path="/admin/ranking" element={<PrivateRoute adminOnly><Ranking /></PrivateRoute>} />
     </Routes>
   </BrowserRouter>
 );

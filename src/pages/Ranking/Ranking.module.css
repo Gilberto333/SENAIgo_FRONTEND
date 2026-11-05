@@ -1,0 +1,178 @@
+.pageWrapper {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 20px;
+}
+
+.title {
+  margin-top: 24px;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #005ca9;
+  font-weight: 700;
+}
+
+.loadingAlert {
+  padding: 16px;
+  background-color: #e6f0fa;
+  color: #005ca9;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.errorBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  background-color: #fde8e8;
+  border: 1px solid #f8b4b4;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.errorText {
+  margin: 0;
+  color: #e30613;
+  font-weight: 600;
+}
+
+.retryButton {
+  padding: 8px 18px;
+  background-color: #005ca9;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.retryButton:hover {
+  background-color: #004587;
+}
+
+.emptyState {
+  padding: 24px;
+  text-align: center;
+  color: #718096;
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 1px dashed #cbd5e0;
+  font-style: italic;
+}
+
+.tableContainer {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table th,
+.table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table th {
+  background-color: #f1f5f9;
+  color: #334155;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.colPosicao {
+  width: 100px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.table th.colPosicao {
+  text-align: center;
+}
+
+.colPontos {
+  text-align: right;
+  width: 120px;
+}
+
+.table th.colPontos {
+  text-align: right;
+}
+
+.medalha {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.primeiroLugar {
+  background-color: #fffdf0;
+}
+
+.segundoLugar {
+  background-color: #f8fafc;
+}
+
+.terceiroLugar {
+  background-color: #fffaf5;
+}
+
+.nomeWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.nomeTexto {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.emailMobile {
+  display: none;
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.pontosBadge {
+  display: inline-block;
+  background-color: #e30613;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+@media (max-width: 640px) {
+  .colEmail {
+    display: none;
+  }
+
+  .emailMobile {
+    display: block;
+  }
+
+  .table th,
+  .table td {
+    padding: 12px 10px;
+  }
+}
