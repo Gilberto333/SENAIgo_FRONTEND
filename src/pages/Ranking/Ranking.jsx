@@ -55,7 +55,6 @@ const Ranking = () => {
                 <tr>
                   <th className={styles.colPosicao}>Posição</th>
                   <th>Nome</th>
-                  <th className={styles.colEmail}>E-mail</th>
                   <th className={styles.colPontos}>Pontos</th>
                 </tr>
               </thead>
