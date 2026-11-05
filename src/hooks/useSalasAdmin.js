@@ -2,8 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import * as salasService from '../services/salasService';
 import { useProgresso } from './useProgresso';
 
-// Todas as salas (inclusive desativadas) + operações de administração.
-// Após cada alteração, a lista e o progresso do aluno (Home/Header) são recarregados da API.
+
 export const useSalasAdmin = () => {
   const { recarregar: recarregarProgresso } = useProgresso();
   const [salas, setSalas] = useState([]);

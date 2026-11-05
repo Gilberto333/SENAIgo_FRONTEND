@@ -15,7 +15,7 @@ export const useRanking = () => {
     } catch (err) {
       setError(err.message || 'Erro ao carregar o ranking.');
     } finally {
-      setLoading(false);
+      if (!silencioso) setLoading(false);
     }
   }, []);
 

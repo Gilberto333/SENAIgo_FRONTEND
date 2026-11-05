@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import * as produtosService from '../services/produtosService';
 
-// Lista de produtos da loja + operações de administração. Após cada alteração a lista é recarregada da API.
 export const useProdutos = () => {
   const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(true);

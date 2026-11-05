@@ -102,7 +102,7 @@ const GerenciarVisitasUsuarios = () => {
             <div className={styles.painelVisitas}>
               {!usuarioSelecionado ? (
                 <div className={styles.placeholderSelecao}>
-                  👈 Selecione um usuário ao lado para visualizar o histórico de salas escaneadas.
+                   Selecione um usuário ao lado para visualizar o histórico de salas escaneadas.
                 </div>
               ) : (
                 <div className={styles.detalhesContainer}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Header from '../../components/Header/Header';
 import AdminTabs from '../../components/AdminTabs/AdminTabs';
 import { useRanking } from '../../hooks/useRanking';
@@ -6,6 +6,14 @@ import styles from './Ranking.module.css';
 
 const Ranking = () => {
   const { ranking, loading, error, recarregar } = useRanking();
+
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      recarregar({ silencioso: true });
+    }, 5000);
+
+    return () => clearInterval(intervalo);
+  }, [recarregar]);
 
   const renderPosicao = (posicao) => {
     if (posicao === 1) return <span className={styles.medalha}>🥇 1º</span>;
@@ -36,7 +44,7 @@ const Ranking = () => {
         {error && !loading && (
           <div className={styles.errorBox}>
             <p className={styles.errorText}>{error}</p>
-            <button onClick={recarregar} className={styles.retryButton}>
+            <button onClick={() => recarregar()} className={styles.retryButton}>
               Tentar novamente
             </button>
           </div>
