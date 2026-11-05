@@ -75,55 +75,62 @@ const GerenciarVisitasUsuarios = () => {
                 </div>
               ) : (
                 <ul className={styles.listaUsuarios}>
-                  {usuariosFiltrados.map((u) => {
-                    const isSelected = usuarioSelecionado?.id === u.id;
-                    return (
-                      <li
-                        key={u.id}
-                        className={`${styles.itemUsuario} ${
-                          isSelected ? styles.itemUsuarioAtivo : ''
-                        }`}
-                        onClick={() => selecionarUsuario(u)}
-                      >
-                        <div className={styles.usuarioInfoMain}>
-                          <span className={styles.usuarioNome}>{u.nome}</span>
-                          <span className={styles.usuarioEmail}>{u.email}</span>
-                        </div>
-                        {u.cpf && (
-                          <span className={styles.usuarioCpf}>CPF: {u.cpf}</span>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </div>
+  {usuariosFiltrados.map((u) => {
+    const isSelected = usuarioSelecionado?.id === u.id;
+    return (
+      <li
+        key={u.id}
+        className={`${styles.itemUsuario} ${
+          isSelected ? styles.itemUsuarioAtivo : ''
+        }`}
+        onClick={() => selecionarUsuario(u)}
+      >
+        <div className={styles.usuarioInfoMain}>
+          <span className={styles.usuarioNome}>{u.nome}</span>
+          <span className={styles.usuarioEmail}>{u.email}</span>
+        </div>
+        <div className={styles.usuarioMetaItem}>
+          {u.cpf && (
+            <span className={styles.usuarioCpf}>CPF: {u.cpf}</span>
+          )}
+          <span className={styles.usuarioPontos}>
+            {u.pontos || 0} {u.pontos === 1 ? 'pt' : 'pts'}
+          </span>
+        </div>
+      </li>
+    );
+  })}
+</ul>
+)}
+</div>
 
-            <div className={styles.painelVisitas}>
-              {!usuarioSelecionado ? (
-                <div className={styles.placeholderSelecao}>
-                   Selecione um usuário ao lado para visualizar o histórico de salas escaneadas.
-                </div>
-              ) : (
-                <div className={styles.detalhesContainer}>
-                  <div className={styles.usuarioHeaderCard}>
-                    <h3 className={styles.usuarioHeaderNome}>
-                      {usuarioSelecionado.nome}
-                    </h3>
-                    <div className={styles.usuarioHeaderMeta}>
-                      <span><strong>E-mail:</strong> {usuarioSelecionado.email}</span>
-                      {usuarioSelecionado.cpf && (
-                        <span><strong>CPF:</strong> {usuarioSelecionado.cpf}</span>
-                      )}
-                    </div>
-                  </div>
+<div className={styles.painelVisitas}>
+  {!usuarioSelecionado ? (
+    <div className={styles.placeholderSelecao}>
+      Selecione um usuário ao lado para visualizar o histórico de salas escaneadas.
+    </div>
+  ) : (
+    <div className={styles.detalhesContainer}>
+      <div className={styles.usuarioHeaderCard}>
+        <h3 className={styles.usuarioHeaderNome}>
+          {usuarioSelecionado.nome}
+        </h3>
+        <div className={styles.usuarioHeaderMeta}>
+          <span><strong>E-mail:</strong> {usuarioSelecionado.email}</span>
+          {usuarioSelecionado.cpf && (
+            <span><strong>CPF:</strong> {usuarioSelecionado.cpf}</span>
+          )}
+          <span>
+            <strong>Pontos Acumulados:</strong> {usuarioSelecionado.pontos || 0} {usuarioSelecionado.pontos === 1 ? 'pt' : 'pts'}
+          </span>
+        </div>
+      </div>
 
-                  <h4 className={styles.subtituloVisitas}>Salas Escaneadas</h4>
+      <h4 className={styles.subtituloVisitas}>Salas Escaneadas</h4>
 
-                  {loadingVisitas && (
-                    <div className={styles.loadingAlert}>Carregando histórico...</div>
-                  )}
-
+      {loadingVisitas && (
+        <div className={styles.loadingAlert}>Carregando histórico...</div>
+      )}
                   {erroVisitas && !loadingVisitas && (
                     <div className={styles.errorBox}>
                       <p className={styles.errorText}>{erroVisitas}</p>
