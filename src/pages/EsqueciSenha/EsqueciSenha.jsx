@@ -167,9 +167,7 @@ const EsqueciSenha = () => {
                 required
               />
 
-              <p className={styles.hintText}>
-                A primeira tentativa pode levar alguns segundos enquanto o servidor ativa o banco.
-              </p>
+              
 
               <Button type="submit" variant="primary" fullWidth icon={Mail} loading={loading}>
                 {loading ? 'Enviando...' : 'Enviar código'}
