@@ -51,8 +51,19 @@ const Login = () => {
           </div>
           <form onSubmit={handleLoginSubmit} className={styles.form}>
             {state?.cadastroOk && !error && <Alert variant="success">Cadastro realizado! Faça login para continuar.</Alert>}
+            {state?.senhaAlterada && !error && <Alert variant="success">Senha alterada com sucesso! Faça login com a nova senha.</Alert>}
+
             <Input id="login-email" type="email" label="E-mail" placeholder="seu.email@aluno.senai.br" value={email} onChange={(e) => { setEmail(e.target.value); setError(''); }} icon={Mail} required />
-            <Input id="login-senha" type="password" label="Senha" placeholder="••••••••" value={senha} onChange={(e) => { setSenha(e.target.value); setError(''); }} icon={Lock} required />
+            
+            <div className={styles.passwordFieldGroup}>
+              <Input id="login-senha" type="password" label="Senha" placeholder="••••••••" value={senha} onChange={(e) => { setSenha(e.target.value); setError(''); }} icon={Lock} required />
+              <div className={styles.forgotWrapper}>
+                <Link to="/esqueci-senha" className={styles.forgotLink}>
+                  Esqueci minha senha
+                </Link>
+              </div>
+            </div>
+
             {error && <Alert variant="error">{error}</Alert>}
             <Button type="submit" variant="primary" fullWidth icon={LogIn} loading={loading}>{loading ? 'Entrando...' : 'Entrar'}</Button>
           </form>
