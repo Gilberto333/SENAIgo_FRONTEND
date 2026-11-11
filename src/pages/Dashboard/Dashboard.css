@@ -1,0 +1,163 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+.dash-page {
+    --d-bg: #f5f7fb;
+    --d-card: #ffffff;
+    --d-ink: #1b2a4a;
+    --d-muted: #6b7a93;
+    --d-line: #e3e8f0;
+    --d-navy: #233a6b;
+    --d-navy-2: #172a52;
+    --d-orange: #c94a1f;
+    --d-gold-bg: #fdf0c8;
+    --d-gold: #a8560a;
+
+    font-family: "Inter", system-ui, sans-serif;
+    background: var(--d-bg);
+    color: var(--d-ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ---------- Barra superior ---------- */
+.dash-header {
+    position: sticky; top: 0; z-index: 20;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 12px clamp(12px, 3vw, 32px);
+    background: #fff; border-bottom: 1px solid var(--d-line);
+}
+.dash-header-esq { display: flex; align-items: center; gap: 12px; }
+.dash-menu-btn {
+    width: 40px; height: 40px; display: grid; place-items: center;
+    background: #fff; color: var(--d-navy); border: 1px solid var(--d-line); border-radius: 10px; cursor: pointer;
+}
+.dash-menu-btn:hover { background: var(--d-bg); }
+.dash-logo { display: flex; align-items: center; gap: 8px; }
+.dash-logo-icone {
+    width: 34px; height: 34px; display: grid; place-items: center;
+    background: var(--d-navy); color: #fff; border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(35, 58, 107, .3);
+}
+.dash-logo-texto { font-weight: 700; font-size: 1.25rem; color: var(--d-navy); letter-spacing: -.02em; }
+.dash-logo-texto i { color: var(--d-orange); font-weight: 700; margin-left: 1px; }
+
+.dash-ola {
+    display: flex; align-items: center; gap: 8px;
+    background: #eef1f7; padding: 8px 18px; border-radius: 999px; font-size: .9rem; color: var(--d-ink);
+}
+.dash-ola b { text-transform: uppercase; color: var(--d-navy); }
+
+.dash-voltar {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--d-navy); color: #fff; border: 0; border-radius: 10px;
+    padding: 10px 18px; font: 600 .9rem "Inter", system-ui, sans-serif; cursor: pointer;
+}
+.dash-voltar:hover { background: var(--d-navy-2); }
+
+.dash-menu-btn:focus-visible, .dash-voltar:focus-visible { outline: 3px solid var(--d-orange); outline-offset: 2px; }
+
+/* ---------- Conteúdo ---------- */
+.dash { max-width: 1200px; margin: 0 auto; padding: 24px clamp(12px, 3vw, 32px) 48px; box-sizing: border-box; }
+
+.dash-banner {
+    background: linear-gradient(135deg, var(--d-navy) 0%, var(--d-navy-2) 100%);
+    color: #fff; border-radius: 16px; padding: 24px 28px; margin-bottom: 20px;
+}
+.dash-tag { display: inline-block; background: rgba(255,255,255,.16); border-radius: 999px; padding: 5px 12px; font-size: .78rem; }
+.dash-banner h1 { margin: 12px 0 4px; font-size: 1.6rem; }
+.dash-banner p { margin: 0; color: #d3dcef; font-size: .95rem; }
+
+.dash-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 20px; }
+.dash-kpi { background: var(--d-card); border: 1px solid var(--d-line); border-radius: 16px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(35,58,107,.05); }
+.dash-kpi strong { display: block; font-size: 2rem; color: var(--d-navy); }
+.dash-kpi span { color: var(--d-muted); font-size: .85rem; }
+
+.dash-painel { background: var(--d-card); border: 1px solid var(--d-line); border-radius: 16px; padding: 20px 22px; box-shadow: 0 2px 8px rgba(35,58,107,.05); box-sizing: border-box; }
+.dash-painel h2 { margin: 0 0 16px; font-size: 1.1rem; color: var(--d-navy); display: flex; align-items: center; gap: 8px; }
+
+/* ---------- Gráfico de Pizza & Legenda ---------- */
+.container-grafico-pizza {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 0;
+}
+
+.grafico-pizza {
+    width: 150px;
+    height: 150px;
+    min-width: 150px;
+    min-height: 150px;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(35, 58, 107, 0.12);
+}
+
+.legenda-pizza {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    max-height: 120px;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.legenda-pizza li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--d-ink);
+}
+
+.cor-legenda {
+    width: 12px;
+    height: 12px;
+    border-radius: 4px;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+/* ---------- Outros Componentes e Listas ---------- */
+.dash-duas { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 20px; }
+.dash-lista { list-style: none; margin: 0; padding: 0; }
+.dash-lista li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--d-line); font-size: .92rem; }
+.dash-lista li:last-child { border-bottom: 0; }
+.dash-lista small { color: var(--d-muted); }
+.dash-direita { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+
+.dash-badge { background: var(--d-gold-bg); color: var(--d-gold); border-radius: 999px; padding: 3px 10px; font-size: .78rem; font-weight: 700; }
+.badge-alerta { background-color: #fee2e2; color: #991b1b; padding: 3px 10px; border-radius: 999px; font-size: .78rem; font-weight: 700; }
+
+.tempo-leitura {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--d-muted);
+    font-size: .78rem;
+    margin-top: 2px;
+}
+.visita-info-principal { display: flex; flex-direction: column; }
+
+.dash-vazio, .dash-msg { color: var(--d-muted); font-size: .9rem; text-align: center; padding: 10px 0; }
+.dash-vazio.sucesso { color: #059669; font-weight: 500; }
+.dash-msg { padding: 40px 0; }
+.dash-erro { color: var(--d-orange); }
+
+/* ---------- Responsividade para Celular ---------- */
+@media (max-width: 720px) {
+    .dash-ola { display: none; }
+    .dash-duas { grid-template-columns: 1fr; }
+    .dash-kpis { grid-template-columns: repeat(2, 1fr) !important; }
+    .dash-voltar span { display: none; }
+    .dash-voltar { padding: 10px 12px; }
+    .grafico-pizza { width: 130px; height: 130px; min-width: 130px; min-height: 130px; }
+}
+
+@media (prefers-reduced-motion: reduce) { 
+    .barra i { transition: none; } 
+}

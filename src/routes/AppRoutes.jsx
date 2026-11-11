@@ -11,6 +11,7 @@ import SalasVisitas from '../pages/SalasVisitas/SalasVisitas';
 import GerenciarLoja from '../pages/GerenciarLoja/GerenciarLoja';
 import GerenciarSalas from '../pages/GerenciarSalas/GerenciarSalas';
 import ConsultarResgatesAdmin from '../pages/ConsultarResgatesAdmin/ConsultarResgatesAdmin';
+import Dashboard from '../pages/Dashboard/Dashboard';
 import PrivateRoute from './PrivateRoute';
 import Ranking from '../pages/Ranking/Ranking';
 
@@ -29,6 +30,7 @@ const AppRoutes = () => (
       <Route path="/admin/resgates" element={<PrivateRoute adminOnly><ConsultarResgatesAdmin /></PrivateRoute>} />
       <Route path="/admin/ranking" element={<PrivateRoute adminOnly><Ranking /></PrivateRoute>} />
       <Route path="/admin/visitas-usuarios" element={<PrivateRoute adminOnly><GerenciarVisitasUsuarios /></PrivateRoute>} />
+      <Route path="/admin/dashboard" element={<PrivateRoute adminOnly><Dashboard /></PrivateRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   </BrowserRouter>
