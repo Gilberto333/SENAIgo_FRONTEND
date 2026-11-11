@@ -5,12 +5,11 @@ import { MapPin, LogOut, X, ArrowLeft, Users, LayoutDashboard } from 'lucide-rea
 import styles from './Sidebar.module.css';
 
 const Sidebar = ({ isOpen, onClose }) => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isAdmin = user?.role === 'admin' || user?.isAdmin === true;
-
+  // Páginas onde o botão "Voltar" deve aparecer
   const mostrarVoltar = ['/salas-visitas', '/admin/dashboard'].includes(location.pathname);
 
   useEffect(() => {
@@ -62,27 +61,15 @@ const Sidebar = ({ isOpen, onClose }) => {
         </div>
 
         <nav className={styles.menuList}>
-          {isAdmin && (
-            <>
-              <NavLink
-                to="/admin/dashboard"
-                onClick={onClose}
-                className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}
-              >
-                <LayoutDashboard size={20} className={styles.menuIcon} />
-                <span>Dashboard</span>
-              </NavLink>
+          <NavLink
+            to="/admin/dashboard"
+            onClick={onClose}
+            className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}
+          >
+            <LayoutDashboard size={20} className={styles.menuIcon} />
+            <span>Dashboard</span>
+          </NavLink>
 
-              <NavLink
-                to="/admin/visitas-usuarios"
-                onClick={onClose}
-                className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}
-              >
-                <Users size={20} className={styles.menuIcon} />
-                <span>Visitas por Usuário</span>
-              </NavLink>
-            </>
-          )}
           <Link
             to="/salas-visitas"
             onClick={onClose}
@@ -91,6 +78,15 @@ const Sidebar = ({ isOpen, onClose }) => {
             <MapPin size={20} className={styles.menuIcon} />
             <span>Salas Visitadas</span>
           </Link>
+
+          <NavLink
+            to="/admin/visitas-usuarios"
+            onClick={onClose}
+            className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}
+          >
+            <Users size={20} className={styles.menuIcon} />
+            <span>Visitas por Usuário</span>
+          </NavLink>
 
           {mostrarVoltar && (
             <Link
