@@ -1,5 +1,3 @@
-// Gera um PNG de QR Code para cada sala cadastrada na API em ./qrcodes (npm run qrcodes).
-// Uso: npm run qrcodes [-- http://localhost:3000]   (a API precisa estar rodando)
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import QRCode from 'qrcode';

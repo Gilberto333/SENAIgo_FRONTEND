@@ -25,7 +25,6 @@ const QrCodeContent = ({ sala }) => {
         const totalSize = 600;
         const innerSize = totalSize - borderWidth * 2;
 
-        // 1. Gera o QR Code em um canvas auxiliar com o tamanho interno
         const qrCanvas = document.createElement('canvas');
         await QRCode.toCanvas(qrCanvas, buildQrPayload(sala.salaId), {
           width: innerSize,
