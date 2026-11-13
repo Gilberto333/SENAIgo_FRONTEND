@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useProgresso } from '../../hooks/useProgresso';
 import Header from '../../components/Header/Header';
+import { useNavigate } from 'react-router-dom';
 import Card from '../../components/Card/Card';
 import Alert from '../../components/Alert/Alert';
 import ScannerButton from '../../components/ScannerButton/ScannerButton';
@@ -20,7 +21,8 @@ const Home = () => {
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const closeTimer = useRef(null);
-
+  const navigate = useNavigate();
+  
   useEffect(() => () => clearTimeout(closeTimer.current), []);
 
   const handleOpenScanner = (sala) => {
@@ -50,9 +52,15 @@ const Home = () => {
 
     setFeedback({ variant: 'info', message: 'QR Code lido! Registrando sua visita...' });
     try {
-      await registrarVisita({ salaId: sala.salaId });
+      const { visitaId } = await registrarVisita({ salaId: sala.salaId });
       setFeedback({ variant: 'success', message: `Visita registrada com sucesso! +${sala.pontos} pontos.` });
-      closeTimer.current = setTimeout(handleCloseScanner, CLOSE_DELAY_MS);
+      closeTimer.current = setTimeout(() => {
+        if (visitaId) {
+          navigate(`/avaliar-visita/${visitaId}`, { state: { salaNome: sala.sala } });
+        } else {
+          handleCloseScanner();
+        }
+      }, CLOSE_DELAY_MS);
     } catch (err) {
       setFeedback({ variant: 'error', message: err.message });
     }

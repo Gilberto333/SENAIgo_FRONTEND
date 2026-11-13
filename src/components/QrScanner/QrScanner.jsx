@@ -5,7 +5,6 @@ import Alert from '../Alert/Alert';
 import Button from '../Button/Button';
 import styles from './QrScanner.module.css';
 
-// A câmera liga quando o componente monta e desliga quando ele desmonta (ex.: modal fecha).
 const QrScanner = ({ onDetect }) => {
   const { videoRef, status, error, start, stop } = useQrScanner({ onDetect });
 
