@@ -6,7 +6,6 @@ import { decodeToken, isTokenExpired } from '../utils/jwt';
 
 export const AuthContext = createContext(null);
 
-// Só aceita um token guardado se ele ainda não expirou.
 const getValidStoredToken = () => {
   const token = getToken();
   if (!token) return null;
@@ -35,22 +34,31 @@ export const AuthProvider = ({ children }) => {
     return () => setUnauthorizedHandler(null);
   }, [logout]);
 
-  const login = useCallback(async (email, senha) => {
-    const { token: novoToken } = await authService.login({ email, senha });
+  const iniciarSessao = useCallback((novoToken) => {
     if (!novoToken || !decodeToken(novoToken)) throw new ApiError('Resposta inesperada do servidor.');
     setToken(novoToken);
     setTokenState(novoToken);
   }, []);
+
+  const login = useCallback(async (email, senha) => {
+    const { token: novoToken } = await authService.login({ email, senha });
+    iniciarSessao(novoToken); 
+  }, [iniciarSessao]);
+
+  const cadastrar = useCallback(async (dadosUsuario) => {
+    const { token: novoToken } = await authService.cadastrar(dadosUsuario);
+    iniciarSessao(novoToken);
+  }, [iniciarSessao]);
 
   const value = useMemo(() => ({
     user,
     token,
     isAuthenticated: Boolean(user),
     isAdmin: Boolean(user?.admin),
-    cadastrar: authService.cadastrar,
+    cadastrar, 
     login,
     logout,
-  }), [user, token, login, logout]);
+  }), [user, token, cadastrar, login, logout]); 
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

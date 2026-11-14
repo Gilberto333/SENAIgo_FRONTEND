@@ -14,10 +14,12 @@ import ConsultarResgatesAdmin from '../pages/ConsultarResgatesAdmin/ConsultarRes
 import Dashboard from '../pages/Dashboard/Dashboard';
 import PrivateRoute from './PrivateRoute';
 import Ranking from '../pages/Ranking/Ranking';
+import AvaliarVisita from '../pages/AvaliarVisita/AvaliarVisita';
 
 const AppRoutes = () => (
   <BrowserRouter>
     <Routes>
+      <Route path="/avaliar-visita/:visitaId" element={<PrivateRoute><AvaliarVisita /></PrivateRoute>} />
       <Route path="/" element={<Tutorial />} />
       <Route path="/cadastro" element={<Cadastro />} />
       <Route path="/login" element={<Login />} />

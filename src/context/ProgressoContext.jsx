@@ -9,7 +9,6 @@ export const ProgressoContext = createContext(null);
 
 const PONTOS_INICIAIS = { pontosGanhos: 0, pontosGastos: 0, saldo: 0 };
 
-// Dados do aluno logado: áreas, visitas e saldo de pontos. Tudo vem da API.
 export const ProgressoProvider = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
   const userId = user?.id;
@@ -60,18 +59,18 @@ export const ProgressoProvider = ({ children }) => {
     setPontos(await saldoService.obterSaldo());
   }, []);
 
-  // Salas desativadas deixam de contar no progresso (os pontos já ganhos continuam no saldo).
   const visitedRooms = useMemo(
     () => [...new Set(visits.map((v) => v.salaId))].filter((id) => salas.some((s) => s.salaId === id)),
     [visits, salas],
   );
 
-  const registrarVisita = useCallback(async ({ salaId }) => {
+    const registrarVisita = useCallback(async ({ salaId }) => {
     if (visitedRooms.includes(salaId)) {
       throw new ApiError('Você já visitou esta área.', { status: 409 });
     }
+    let localDeVisita;
     try {
-      const { localDeVisita } = await visitasService.registrarVisita({ salaId });
+      ({ localDeVisita } = await visitasService.registrarVisita({ salaId }));
       setVisits((prev) => [...prev, localDeVisita]);
     } catch (err) {
       if (err.status === 409) sincronizar();
@@ -82,6 +81,7 @@ export const ProgressoProvider = ({ children }) => {
     } catch {
       setError('Visita registrada, mas não foi possível atualizar seu saldo de pontos.');
     }
+    return localDeVisita;
   }, [visitedRooms, sincronizar, atualizarSaldo]);
 
   const value = useMemo(() => ({

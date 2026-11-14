@@ -48,7 +48,7 @@ const Cadastro = () => {
         email: formData.email.trim(),
         senha: formData.senha
       });
-      navigate('/login', { state: { cadastroOk: true } });
+      navigate('/home');   
     } catch (err) {
       setSubmitError(err.message);
     } finally {
