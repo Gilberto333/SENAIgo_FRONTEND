@@ -41,7 +41,6 @@ const requestCamera = async () => {
       audio: false,
     });
   } catch (err) {
-    // Dispositivos sem câmera traseira/resolução pedida: tenta qualquer câmera disponível.
     if (err?.name === 'OverconstrainedError' || err?.name === 'ConstraintNotSatisfiedError') {
       return navigator.mediaDevices.getUserMedia({ video: true, audio: false });
     }
@@ -62,13 +61,9 @@ const decodeFrame = (video, canvas) => {
   return jsQR(data, width, height, { inversionAttempts: 'dontInvert' })?.data || null;
 };
 
-/**
- * Controla a câmera e lê QR Codes em tempo real.
- * `onDetect(texto)` pode ser assíncrona: enquanto ela roda a leitura fica pausada, e o
- * mesmo QR Code só é processado de novo depois de `cooldownMs` (evita leituras duplicadas).
- */
+
 export const useQrScanner = ({ onDetect, cooldownMs = env.scanCooldownMs } = {}) => {
-  const [status, setStatus] = useState('idle'); // idle | starting | scanning | error
+  const [status, setStatus] = useState('idle');
   const [error, setError] = useState(null);
 
   const videoRef = useRef(null);
@@ -95,7 +90,7 @@ export const useQrScanner = ({ onDetect, cooldownMs = env.scanCooldownMs } = {})
   }, []);
 
   const stop = useCallback(() => {
-    sessionRef.current += 1; // invalida qualquer início de câmera ainda pendente
+    sessionRef.current += 1;  
     releaseCamera();
     setStatus('idle');
   }, [releaseCamera]);

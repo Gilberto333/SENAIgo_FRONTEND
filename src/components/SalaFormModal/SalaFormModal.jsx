@@ -85,7 +85,6 @@ const SalaForm = ({ sala, onSubmit, onCancel }) => {
   );
 };
 
-// O formulário só existe enquanto o modal está aberto, então os campos reiniciam a cada abertura.
 const SalaFormModal = ({ isOpen, sala = null, onSubmit, onClose }) => (
   <Modal isOpen={isOpen} onClose={onClose} title={sala ? 'Editar sala' : 'Nova sala'}>
     <SalaForm sala={sala} onSubmit={onSubmit} onCancel={onClose} />

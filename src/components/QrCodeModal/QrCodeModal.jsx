@@ -13,7 +13,7 @@ const QrCodeContent = ({ sala }) => {
   const [qrColor, setQrColor] = useState('#000000');
   const [bgColor, setBgColor] = useState('#FFFFFF');
   const [borderColor, setBorderColor] = useState('#000000');
-  const [borderWidth, setBorderWidth] = useState(16); // 0 = sem borda
+  const [borderWidth, setBorderWidth] = useState(16); 
   const [logoSrc, setLogoSrc] = useState(null);
 
   useEffect(() => {

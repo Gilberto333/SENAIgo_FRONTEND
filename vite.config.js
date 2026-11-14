@@ -11,7 +11,6 @@ export default defineConfig(({ mode }) => {
     server: {
       port: Number(env.VITE_DEV_PORT) || 5173,
       host: true,
-      // Encaminha /api para a API local (útil para testar no celular via HTTPS sem mixed content).
       proxy: proxyTarget
         ? { '/api': { target: proxyTarget, changeOrigin: true, rewrite: (path) => path.replace(/^\/api/, '') } }
         : undefined,
