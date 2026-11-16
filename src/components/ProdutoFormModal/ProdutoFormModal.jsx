@@ -72,7 +72,6 @@ const ProdutoForm = ({ produto, onSubmit, onCancel }) => {
   );
 };
 
-// O formulário só existe enquanto o modal está aberto, então os campos reiniciam a cada abertura.
 const ProdutoFormModal = ({ isOpen, produto = null, onSubmit, onClose }) => (
   <Modal isOpen={isOpen} onClose={onClose} title={produto ? 'Editar produto' : 'Novo produto'}>
     <ProdutoForm produto={produto} onSubmit={onSubmit} onCancel={onClose} />

@@ -9,7 +9,6 @@ const Sidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Páginas onde o botão "Voltar" deve aparecer
   const mostrarVoltar = ['/salas-visitas', '/admin/dashboard'].includes(location.pathname);
 
   useEffect(() => {
