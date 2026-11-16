@@ -4,17 +4,40 @@ import Modal from '../Modal/Modal';
 import Button from '../Button/Button';
 import Alert from '../Alert/Alert';
 import { buildQrPayload } from '../../utils/qrCode';
-import { Download, ImagePlus, Trash2 } from 'lucide-react';
+import { Download, ImagePlus, Trash2, Save, Sparkles } from 'lucide-react';
 import styles from './QrCodeModal.module.css';
 
-const QrCodeContent = ({ sala }) => {
+// Função auxiliar para formatar Date ou ISO string no padrão YYYY-MM-DDTHH:mm do input local
+function formatarParaInputLocal(dataValor) {
+  if (!dataValor) return '';
+  const data = dataValor instanceof Date ? dataValor : new Date(dataValor);
+  if (isNaN(data.getTime())) return '';
+  const offset = data.getTimezoneOffset() * 60000;
+  return new Date(data.getTime() - offset).toISOString().slice(0, 16);
+}
+
+const QrCodeContent = ({ sala, onAtualizarSala }) => {
   const [image, setImage] = useState('');
   const [error, setError] = useState('');
+  const [sucesso, setSucesso] = useState('');
   const [qrColor, setQrColor] = useState('#000000');
   const [bgColor, setBgColor] = useState('#FFFFFF');
   const [borderColor, setBorderColor] = useState('#000000');
   const [borderWidth, setBorderWidth] = useState(16); // 0 = sem borda
   const [logoSrc, setLogoSrc] = useState(null);
+
+  // Estados do controle de leitura e horário (alinhados com bloqueada_ate)
+  const [bloquearLeitura, setBloquearLeitura] = useState(Boolean(sala.bloquear_leitura));
+  const [bloqueadaAte, setBloqueadaAte] = useState(() => formatarParaInputLocal(sala.bloqueada_ate));
+  const [salvando, setSalvando] = useState(false);
+
+  // Atualiza os estados se o usuário abrir o modal de outra sala
+  useEffect(() => {
+    setBloquearLeitura(Boolean(sala.bloquear_leitura));
+    setBloqueadaAte(formatarParaInputLocal(sala.bloqueada_ate));
+    setSucesso('');
+    setError('');
+  }, [sala]);
 
   useEffect(() => {
     let ativo = true;
@@ -97,6 +120,22 @@ const QrCodeContent = ({ sala }) => {
     e.target.value = '';
   };
 
+  const ativarModoLendario = () => {
+    // Aplica o tema dourado mantendo bom contraste para leitura da câmera
+    setQrColor('#B45309');      // Dourado escuro / âmbar intenso
+    setBgColor('#FFFBEB');      // Fundo creme dourado bem claro
+    setBorderColor('#F59E0B');  // Borda dourada vibrante
+    setBorderWidth((prev) => (prev === 0 ? 16 : prev));
+
+    // Define o tempo para agora + 1 hora e 30 minutos (90 minutos)
+    const emUmaHoraEMeia = new Date(Date.now() + 90 * 60 * 1000);
+    setBloqueadaAte(formatarParaInputLocal(emUmaHoraEMeia));
+    setBloquearLeitura(false); // Garante que a leitura esteja liberada durante esse tempo
+
+    setError('');
+    setSucesso('Modo Lendário aplicado! Tempo definido para 1h30 (clique em Salvar para confirmar no banco).');
+  };
+
   const baixar = () => {
     const link = document.createElement('a');
     link.href = image;
@@ -104,9 +143,74 @@ const QrCodeContent = ({ sala }) => {
     link.click();
   };
 
+  const salvarControleLeitura = async () => {
+    try {
+      setSalvando(true);
+      setError('');
+      setSucesso('');
+
+      const dataFormatada = bloqueadaAte ? new Date(bloqueadaAte).toISOString() : null;
+
+      // Ajuste a URL base caso use variável de ambiente (ex: import.meta.env.VITE_API_URL)
+      const response = await fetch(`http://localhost:3000/bloquearLeitura/${sala.salaId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({
+          bloquear_leitura: bloquearLeitura,
+          bloqueada_ate: dataFormatada,
+        }),
+      });
+
+      const dados = await response.json();
+
+      if (!response.ok) {
+        throw new Error(dados.erro || 'Falha ao salvar configuração.');
+      }
+
+      setSucesso('Regras de leitura salvas com sucesso!');
+      if (onAtualizarSala) {
+        onAtualizarSala(dados.sala);
+      }
+    } catch (err) {
+      setError(err.message || 'Erro ao salvar o horário/bloqueio da sala.');
+    } finally {
+      setSalvando(false);
+    }
+  };
+
   return (
     <div className={styles.content}>
       {error && <Alert variant="error">{error}</Alert>}
+      {sucesso && <Alert variant="success">{sucesso}</Alert>}
+
+      {/* Botão Preset Lendário */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', width: '100%' }}>
+        <button
+          type="button"
+          onClick={ativarModoLendario}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            border: '1px solid #D97706',
+            background: 'linear-gradient(135deg, #FDE047 0%, #F59E0B 50%, #D97706 100%)',
+            color: '#451A03',
+            fontWeight: 700,
+            fontSize: '0.875rem',
+            cursor: 'pointer',
+            boxShadow: '0 2px 6px rgba(245, 158, 11, 0.35)',
+          }}
+        >
+          <Sparkles size={16} />
+          Lendário (Dourado • 1h30)
+        </button>
+      </div>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', marginBottom: '12px' }}>
         <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', cursor: 'pointer' }}>
@@ -201,13 +305,68 @@ const QrCodeContent = ({ sala }) => {
       {image && <img src={image} alt={`QR Code da sala ${sala.sala}`} className={styles.image} />}
       <p className={styles.hint}>Imprima e cole este QR Code na sala <strong>{sala.sala}</strong>.</p>
       {image && <Button fullWidth icon={Download} onClick={baixar}>Baixar PNG</Button>}
+
+      {/* Painel de Controle de Tempo e Bloqueio */}
+      <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '16px', marginTop: '16px', width: '100%' }}>
+        <p style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '10px' }}>
+          Controle de Leitura do QR Code
+        </p>
+
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', marginBottom: '12px', cursor: 'pointer' }}>
+          <input
+            type="checkbox"
+            checked={bloquearLeitura}
+            onChange={(e) => setBloquearLeitura(e.target.checked)}
+            style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+          />
+          Bloquear leitura imediatamente
+        </label>
+
+        <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.875rem', marginBottom: '12px' }}>
+          Bloquear automaticamente após (data e hora):
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <input
+              type="datetime-local"
+              value={bloqueadaAte}
+              onChange={(e) => setBloqueadaAte(e.target.value)}
+              style={{
+                flex: 1,
+                padding: '6px 10px',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                fontSize: '0.875rem',
+              }}
+            />
+            {bloqueadaAte && (
+              <button
+                type="button"
+                onClick={() => setBloqueadaAte('')}
+                style={{
+                  padding: '6px 10px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  background: '#f9fafb',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                }}
+              >
+                Limpar
+              </button>
+            )}
+          </div>
+        </label>
+
+        <Button fullWidth icon={Save} onClick={salvarControleLeitura} disabled={salvando}>
+          {salvando ? 'Salvando...' : 'Salvar Regras de Leitura'}
+        </Button>
+      </div>
     </div>
   );
 };
 
-const QrCodeModal = ({ sala, onClose }) => (
+const QrCodeModal = ({ sala, onClose, onAtualizarSala }) => (
   <Modal isOpen={Boolean(sala)} onClose={onClose} title={sala ? `QR Code: ${sala.sala}` : 'QR Code'}>
-    {sala && <QrCodeContent sala={sala} />}
+    {sala && <QrCodeContent sala={sala} onAtualizarSala={onAtualizarSala} />}
   </Modal>
 );
 
