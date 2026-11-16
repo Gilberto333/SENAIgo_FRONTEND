@@ -1,3 +1,264 @@
-.content { display: flex; flex-direction: column; align-items: center; gap: 14px; }
-.image { width: 100%; max-width: 280px; border: 1px solid var(--border-color); border-radius: var(--radius-md); }
-.hint { text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-height: 75vh;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 999px;
+}
+
+.image {
+  width: 100%;
+  max-width: 280px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.hint {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Preset Lendário */
+.legendaryWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+  width: 100%;
+}
+
+.legendaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #d97706;
+  background: linear-gradient(135deg, #fde047 0%, #f59e0b 50%, #d97706 100%);
+  color: #451a03;
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.35);
+}
+
+/* Controles de cor, borda e logo */
+.controlsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.colorLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.colorInput {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.borderSelect {
+  padding: 4px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.logoUploadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.logoRemoveBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+/* Divisores de Seção */
+.sectionDivider {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 16px;
+  margin-top: 6px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Modo Palestra */
+.palestraBox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.9rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #f9fafb;
+}
+
+.palestraHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.9rem;
+  color: #111827;
+}
+
+.palestraHelper {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #4b5563;
+}
+
+.alternativasList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.alternativaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.alternativaCorreta {
+  border-color: #16a34a;
+  background-color: #f0fdf4;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.letraBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  background-color: #e5e7eb;
+  color: #1f2937;
+}
+
+.alternativaCorreta .letraBadge {
+  background-color: #16a34a;
+  color: #ffffff;
+}
+
+.alternativaInput {
+  flex: 1;
+}
+
+.corretaTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #15803d;
+  white-space: nowrap;
+}
+
+.palestraSaveWrapper {
+  margin-top: 2px;
+}
+
+/* Controle de Leitura */
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.checkboxInput {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.datetimeLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.875rem;
+}
+
+.datetimeRow {
+  display: flex;
+  gap: 8px;
+}
+
+.datetimeInput {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.clearBtn {
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #f9fafb;
+  font-size: 0.8rem;
+  cursor: pointer;
+}

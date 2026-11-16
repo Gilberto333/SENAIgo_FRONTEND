@@ -3,11 +3,22 @@ import QRCode from 'qrcode';
 import Modal from '../Modal/Modal';
 import Button from '../Button/Button';
 import Alert from '../Alert/Alert';
+import Input from '../Input/Input';
 import { buildQrPayload } from '../../utils/qrCode';
-import { Download, ImagePlus, Trash2, Save, Sparkles } from 'lucide-react';
+import {
+  Download,
+  ImagePlus,
+  Trash2,
+  Save,
+  Sparkles,
+  Presentation,
+  HelpCircle,
+  CheckCircle2,
+} from 'lucide-react';
 import styles from './QrCodeModal.module.css';
 
-// Função auxiliar para formatar Date ou ISO string no padrão YYYY-MM-DDTHH:mm do input local
+const ALTERNATIVAS_LETRAS = ['A', 'B', 'C', 'D', 'E'];
+
 function formatarParaInputLocal(dataValor) {
   if (!dataValor) return '';
   const data = dataValor instanceof Date ? dataValor : new Date(dataValor);
@@ -23,18 +34,30 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
   const [qrColor, setQrColor] = useState('#000000');
   const [bgColor, setBgColor] = useState('#FFFFFF');
   const [borderColor, setBorderColor] = useState('#000000');
-  const [borderWidth, setBorderWidth] = useState(16); // 0 = sem borda
+  const [borderWidth, setBorderWidth] = useState(16);
   const [logoSrc, setLogoSrc] = useState(null);
 
-  // Estados do controle de leitura e horário (alinhados com bloqueada_ate)
+  // Estados do controle de leitura e horário
   const [bloquearLeitura, setBloquearLeitura] = useState(Boolean(sala.bloquear_leitura));
   const [bloqueadaAte, setBloqueadaAte] = useState(() => formatarParaInputLocal(sala.bloqueada_ate));
   const [salvando, setSalvando] = useState(false);
 
-  // Atualiza os estados se o usuário abrir o modal de outra sala
+  // Estados do Modo Palestra (Questão A - E)
+  const [modoPalestra, setModoPalestra] = useState(Boolean(sala.modoPalestra || sala.questao));
+  const [pergunta, setPergunta] = useState(sala.questao?.pergunta ?? '');
+  const [alternativas, setAlternativas] = useState(
+    sala.questao?.alternativas ?? { A: '', B: '', C: '', D: '', E: '' }
+  );
+  const [correta, setCorreta] = useState(sala.questao?.correta ?? 'A');
+  const [salvandoPalestra, setSalvandoPalestra] = useState(false);
+
   useEffect(() => {
     setBloquearLeitura(Boolean(sala.bloquear_leitura));
     setBloqueadaAte(formatarParaInputLocal(sala.bloqueada_ate));
+    setModoPalestra(Boolean(sala.modoPalestra || sala.questao));
+    setPergunta(sala.questao?.pergunta ?? '');
+    setAlternativas(sala.questao?.alternativas ?? { A: '', B: '', C: '', D: '', E: '' });
+    setCorreta(sala.questao?.correta ?? 'A');
     setSucesso('');
     setError('');
   }, [sala]);
@@ -104,7 +127,9 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
     }
 
     gerarQrCode();
-    return () => { ativo = false; };
+    return () => {
+      ativo = false;
+    };
   }, [sala.salaId, qrColor, bgColor, borderColor, borderWidth, logoSrc]);
 
   useEffect(() => {
@@ -121,16 +146,14 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
   };
 
   const ativarModoLendario = () => {
-    // Aplica o tema dourado mantendo bom contraste para leitura da câmera
-    setQrColor('#B45309');      // Dourado escuro / âmbar intenso
-    setBgColor('#FFFBEB');      // Fundo creme dourado bem claro
-    setBorderColor('#F59E0B');  // Borda dourada vibrante
+    setQrColor('#B45309');
+    setBgColor('#FFFBEB');
+    setBorderColor('#F59E0B');
     setBorderWidth((prev) => (prev === 0 ? 16 : prev));
 
-    // Define o tempo para agora + 1 hora e 30 minutos (90 minutos)
     const emUmaHoraEMeia = new Date(Date.now() + 90 * 60 * 1000);
     setBloqueadaAte(formatarParaInputLocal(emUmaHoraEMeia));
-    setBloquearLeitura(false); // Garante que a leitura esteja liberada durante esse tempo
+    setBloquearLeitura(false);
 
     setError('');
     setSucesso('Modo Lendário aplicado! Tempo definido para 1h30 (clique em Salvar para confirmar no banco).');
@@ -151,12 +174,11 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
 
       const dataFormatada = bloqueadaAte ? new Date(bloqueadaAte).toISOString() : null;
 
-      // Ajuste a URL base caso use variável de ambiente (ex: import.meta.env.VITE_API_URL)
       const response = await fetch(`http://localhost:3000/bloquearLeitura/${sala.salaId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify({
           bloquear_leitura: bloquearLeitura,
@@ -181,65 +203,124 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
     }
   };
 
+  const handleAlternativaChange = (letra, valor) => {
+    setAlternativas((prev) => ({ ...prev, [letra]: valor }));
+    setError('');
+  };
+
+  const salvarModoPalestra = async () => {
+    try {
+      setError('');
+      setSucesso('');
+
+      if (modoPalestra) {
+        if (!pergunta.trim()) {
+          setError('Digite o enunciado da questão para o Modo Palestra.');
+          return;
+        }
+        const vazia = ALTERNATIVAS_LETRAS.find((letra) => !alternativas[letra]?.trim());
+        if (vazia) {
+          setError(`Preencha a alternativa ${vazia}.`);
+          return;
+        }
+      }
+
+      setSalvandoPalestra(true);
+
+      const payload = {
+        sala: sala.sala,
+        descricao: sala.descricao || '',
+        icone: sala.icone || 'map-pin',
+        pontos: Number(sala.pontos),
+        ativa: Boolean(sala.ativa),
+        modoPalestra,
+        questao: modoPalestra
+          ? {
+              pergunta: pergunta.trim(),
+              alternativas: {
+                A: alternativas.A.trim(),
+                B: alternativas.B.trim(),
+                C: alternativas.C.trim(),
+                D: alternativas.D.trim(),
+                E: alternativas.E.trim(),
+              },
+              correta,
+            }
+          : null,
+      };
+
+      const response = await fetch(`http://localhost:3000/atualizarSala/${sala.salaId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const dados = await response.json();
+
+      if (!response.ok) {
+        throw new Error(dados.erro || 'Falha ao salvar Modo Palestra.');
+      }
+
+      setSucesso(
+        modoPalestra
+          ? 'Modo Palestra e questão salvos com sucesso!'
+          : 'Modo Palestra desativado com sucesso!'
+      );
+
+      if (onAtualizarSala) {
+        onAtualizarSala(dados.sala);
+      }
+    } catch (err) {
+      setError(err.message || 'Erro ao salvar Modo Palestra.');
+    } finally {
+      setSalvandoPalestra(false);
+    }
+  };
+
   return (
     <div className={styles.content}>
       {error && <Alert variant="error">{error}</Alert>}
       {sucesso && <Alert variant="success">{sucesso}</Alert>}
 
-      {/* Botão Preset Lendário */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', width: '100%' }}>
-        <button
-          type="button"
-          onClick={ativarModoLendario}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            padding: '8px 16px',
-            borderRadius: '8px',
-            border: '1px solid #D97706',
-            background: 'linear-gradient(135deg, #FDE047 0%, #F59E0B 50%, #D97706 100%)',
-            color: '#451A03',
-            fontWeight: 700,
-            fontSize: '0.875rem',
-            cursor: 'pointer',
-            boxShadow: '0 2px 6px rgba(245, 158, 11, 0.35)',
-          }}
-        >
+      <div className={styles.legendaryWrapper}>
+        <button type="button" onClick={ativarModoLendario} className={styles.legendaryBtn}>
           <Sparkles size={16} />
           Lendário (Dourado • 1h30)
         </button>
       </div>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', marginBottom: '12px' }}>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', cursor: 'pointer' }}>
+      {/* Controles de Aparência do QR Code */}
+      <div className={styles.controlsRow}>
+        <label className={styles.colorLabel}>
           <input
             type="color"
             value={qrColor}
             onChange={(e) => setQrColor(e.target.value)}
-            style={{ width: '28px', height: '28px', border: 'none', background: 'none', cursor: 'pointer' }}
+            className={styles.colorInput}
           />
           Cor
         </label>
 
-        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', cursor: 'pointer' }}>
+        <label className={styles.colorLabel}>
           <input
             type="color"
             value={bgColor}
             onChange={(e) => setBgColor(e.target.value)}
-            style={{ width: '28px', height: '28px', border: 'none', background: 'none', cursor: 'pointer' }}
+            className={styles.colorInput}
           />
           Fundo
         </label>
 
-        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', cursor: 'pointer' }}>
+        <label className={styles.colorLabel}>
           <input
             type="color"
             value={borderColor}
             onChange={(e) => setBorderColor(e.target.value)}
             disabled={borderWidth === 0}
-            style={{ width: '28px', height: '28px', border: 'none', background: 'none', cursor: 'pointer' }}
+            className={styles.colorInput}
           />
           Borda
         </label>
@@ -247,13 +328,7 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
         <select
           value={borderWidth}
           onChange={(e) => setBorderWidth(Number(e.target.value))}
-          style={{
-            padding: '4px 8px',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            fontSize: '0.875rem',
-            cursor: 'pointer',
-          }}
+          className={styles.borderSelect}
         >
           <option value={0}>Sem borda</option>
           <option value={8}>Borda fina</option>
@@ -261,18 +336,7 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
           <option value={28}>Borda grossa</option>
         </select>
 
-        <label
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '4px 10px',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            fontSize: '0.875rem',
-            cursor: 'pointer',
-          }}
-        >
+        <label className={styles.logoUploadBtn}>
           <ImagePlus size={16} />
           {logoSrc ? 'Trocar logo' : 'Adicionar logo'}
           <input type="file" accept="image/*" onChange={handleUploadLogo} hidden />
@@ -283,18 +347,7 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
             type="button"
             onClick={() => setLogoSrc(null)}
             title="Remover logo"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-              padding: '4px 8px',
-              border: '1px solid #fca5a5',
-              borderRadius: '6px',
-              background: '#fef2f2',
-              color: '#dc2626',
-              fontSize: '0.875rem',
-              cursor: 'pointer',
-            }}
+            className={styles.logoRemoveBtn}
           >
             <Trash2 size={16} />
             Remover
@@ -303,52 +356,131 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
       </div>
 
       {image && <img src={image} alt={`QR Code da sala ${sala.sala}`} className={styles.image} />}
-      <p className={styles.hint}>Imprima e cole este QR Code na sala <strong>{sala.sala}</strong>.</p>
-      {image && <Button fullWidth icon={Download} onClick={baixar}>Baixar PNG</Button>}
+      <p className={styles.hint}>
+        Imprima e cole este QR Code na sala <strong>{sala.sala}</strong>.
+      </p>
+      {image && (
+        <Button fullWidth icon={Download} onClick={baixar}>
+          Baixar PNG
+        </Button>
+      )}
 
-      {/* Painel de Controle de Tempo e Bloqueio */}
-      <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '16px', marginTop: '16px', width: '100%' }}>
-        <p style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '10px' }}>
-          Controle de Leitura do QR Code
-        </p>
+      <div className={styles.sectionDivider}>
+        <Button
+          type="button"
+          variant={modoPalestra ? 'primary' : 'outline'}
+          fullWidth
+          icon={Presentation}
+          onClick={() => setModoPalestra((prev) => !prev)}
+        >
+          {modoPalestra ? 'Modo Palestra (Ativado)' : 'Modo Palestra'}
+        </Button>
 
-        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', marginBottom: '12px', cursor: 'pointer' }}>
+        {modoPalestra && (
+          <div className={styles.palestraBox}>
+            <div className={styles.palestraHeader}>
+              <HelpCircle size={17} />
+              <strong>Questão de Múltipla Escolha (A - E)</strong>
+            </div>
+
+            <Input
+              id="qr-palestra-pergunta"
+              label="Pergunta / Enunciado"
+              placeholder="Ex.: Qual tema foi abordado na palestra?"
+              value={pergunta}
+              onChange={(e) => setPergunta(e.target.value)}
+            />
+
+            <p className={styles.palestraHelper}>
+              Preencha as 5 alternativas e marque a <strong>única resposta correta</strong>:
+            </p>
+
+            <div className={styles.alternativasList}>
+              {ALTERNATIVAS_LETRAS.map((letra) => {
+                const isCorreta = correta === letra;
+                return (
+                  <div
+                    key={letra}
+                    className={`${styles.alternativaItem} ${
+                      isCorreta ? styles.alternativaCorreta : ''
+                    }`}
+                  >
+                    <label
+                      className={styles.radioLabel}
+                      title={`Marcar ${letra} como resposta correta`}
+                    >
+                      <input
+                        type="radio"
+                        name="qr-alternativa-correta"
+                        checked={isCorreta}
+                        onChange={() => setCorreta(letra)}
+                      />
+                      <span className={styles.letraBadge}>{letra}</span>
+                    </label>
+
+                    <div className={styles.alternativaInput}>
+                      <Input
+                        id={`qr-alt-${letra}`}
+                        placeholder={
+                          isCorreta ? `Resposta certa (${letra})` : `Resposta errada (${letra})`
+                        }
+                        value={alternativas[letra]}
+                        onChange={(e) => handleAlternativaChange(letra, e.target.value)}
+                      />
+                    </div>
+
+                    {isCorreta && (
+                      <span className={styles.corretaTag}>
+                        <CheckCircle2 size={15} /> Certa
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <div className={styles.palestraSaveWrapper}>
+          <Button
+            type="button"
+            fullWidth
+            icon={Save}
+            onClick={salvarModoPalestra}
+            disabled={salvandoPalestra}
+          >
+            {salvandoPalestra ? 'Salvando...' : 'Salvar Modo Palestra'}
+          </Button>
+        </div>
+      </div>
+
+      <div className={styles.sectionDivider}>
+        <p className={styles.sectionTitle}>Controle de Leitura do QR Code</p>
+
+        <label className={styles.checkboxLabel}>
           <input
             type="checkbox"
             checked={bloquearLeitura}
             onChange={(e) => setBloquearLeitura(e.target.checked)}
-            style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+            className={styles.checkboxInput}
           />
           Bloquear leitura imediatamente
         </label>
 
-        <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.875rem', marginBottom: '12px' }}>
+        <label className={styles.datetimeLabel}>
           Bloquear automaticamente após (data e hora):
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div className={styles.datetimeRow}>
             <input
               type="datetime-local"
               value={bloqueadaAte}
               onChange={(e) => setBloqueadaAte(e.target.value)}
-              style={{
-                flex: 1,
-                padding: '6px 10px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '0.875rem',
-              }}
+              className={styles.datetimeInput}
             />
             {bloqueadaAte && (
               <button
                 type="button"
                 onClick={() => setBloqueadaAte('')}
-                style={{
-                  padding: '6px 10px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  background: '#f9fafb',
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                }}
+                className={styles.clearBtn}
               >
                 Limpar
               </button>
