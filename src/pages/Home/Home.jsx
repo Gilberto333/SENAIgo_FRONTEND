@@ -94,27 +94,6 @@ const Home = () => {
     await concluirRegistroVisita(sala);
   };
 
-  const handleResponderQuiz = async () => {
-    if (!opcaoEscolhida || !quizSala || enviandoQuiz) return;
-
-    setEnviandoQuiz(true);
-    const respostaCerta = String(quizSala.questao?.correta || quizSala.respostaCorreta || '')
-      .trim()
-      .toUpperCase();
-
-    if (opcaoEscolhida !== respostaCerta) {
-      setFeedback({
-        variant: 'error',
-        message: 'Resposta incorreta! Tente novamente para validar sua participação na palestra.',
-      });
-      setEnviandoQuiz(false);
-      return;
-    }
-
-    await concluirRegistroVisita(quizSala);
-    setEnviandoQuiz(false);
-  };
-
   const obterOpcoesQuiz = (sala) => {
     if (!sala) return [];
     if (sala.questao?.alternativas) {
@@ -124,6 +103,46 @@ const Home = () => {
       ['A', sala.opcaoA],
       ['B', sala.opcaoB],
     ].filter(([, texto]) => Boolean(texto));
+  };
+
+  const handleResponderQuiz = async () => {
+    if (!opcaoEscolhida || !quizSala || enviandoQuiz) return;
+
+    setEnviandoQuiz(true);
+
+    const questaoObj = quizSala.questao || {};
+    const valorBanco = String(
+      questaoObj.correta ??
+      questaoObj.respostaCorreta ??
+      questaoObj.resposta_correta ??
+      quizSala.correta ??
+      quizSala.respostaCorreta ??
+      quizSala.resposta_correta ??
+      quizSala.alternativaCorreta ??
+      ''
+    ).trim().toUpperCase();
+
+    const letraEscolhida = String(opcaoEscolhida).trim().toUpperCase();
+    const opcoes = obterOpcoesQuiz(quizSala);
+    const textoEscolhido = String(
+      opcoes.find(([letra]) => letra.toUpperCase() === letraEscolhida)?.[1] || ''
+    ).trim().toUpperCase();
+
+    const acertou =
+      valorBanco !== '' &&
+      (letraEscolhida === valorBanco || (textoEscolhido !== '' && textoEscolhido === valorBanco));
+
+    if (!acertou) {
+      setFeedback({
+        variant: 'error',
+        message: `Incorreta! Debug -> Escolhida: "${letraEscolhida}" | Banco: "${valorBanco}" | Chaves: ${Object.keys(quizSala).join(', ')} | Questao: ${JSON.stringify(quizSala.questao || {})}`,
+      });
+      setEnviandoQuiz(false);
+      return;
+    }
+
+    await concluirRegistroVisita(quizSala);
+    setEnviandoQuiz(false);
   };
 
   return (
