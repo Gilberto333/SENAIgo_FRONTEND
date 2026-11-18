@@ -20,37 +20,35 @@ const Home = () => {
   const { salas, visitedRooms, registrarVisita, loading, error, recarregar } = useProgresso();
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [feedback, setFeedback] = useState(null);
+
+  // Estados para o Questionário do Modo Palestra
+  const [quizSala, setQuizSala] = useState(null);
+  const [opcaoEscolhida, setOpcaoEscolhida] = useState(null);
+  const [enviandoQuiz, setEnviandoQuiz] = useState(false);
+
   const closeTimer = useRef(null);
   const navigate = useNavigate();
-  
+
   useEffect(() => () => clearTimeout(closeTimer.current), []);
 
   const handleOpenScanner = (sala) => {
     if (visitedRooms.includes(sala.salaId)) return;
     setFeedback(null);
+    setQuizSala(null);
+    setOpcaoEscolhida(null);
     setSelectedRoom(sala);
   };
 
   const handleCloseScanner = useCallback(() => {
     clearTimeout(closeTimer.current);
     setSelectedRoom(null);
+    setQuizSala(null);
+    setOpcaoEscolhida(null);
     setFeedback(null);
   }, []);
 
-  const handleDetect = async (text) => {
-    const salaId = parseQrPayload(text);
-    const sala = salas.find((item) => item.salaId === salaId);
-
-    if (!sala) {
-      setFeedback({ variant: 'warning', message: 'Este QR Code não pertence ao SENAIgo.' });
-      return;
-    }
-    if (sala.salaId !== selectedRoom.salaId) {
-      setFeedback({ variant: 'warning', message: `Este QR Code é da área ${sala.sala}. Escaneie o QR Code de ${selectedRoom.sala}.` });
-      return;
-    }
-
-    setFeedback({ variant: 'info', message: 'QR Code lido! Registrando sua visita...' });
+  const concluirRegistroVisita = async (sala) => {
+    setFeedback({ variant: 'info', message: 'Registrando sua visita...' });
     try {
       const { visitaId } = await registrarVisita({ salaId: sala.salaId });
       setFeedback({ variant: 'success', message: `Visita registrada com sucesso! +${sala.pontos} pontos.` });
@@ -64,6 +62,56 @@ const Home = () => {
     } catch (err) {
       setFeedback({ variant: 'error', message: err.message });
     }
+  };
+
+  const handleDetect = async (text) => {
+    // Se o quiz já estiver aberto na tela, ignora novas leituras da câmera
+    if (quizSala) return;
+
+    const salaId = parseQrPayload(text);
+    const sala = salas.find((item) => item.salaId === salaId);
+
+    if (!sala) {
+      setFeedback({ variant: 'warning', message: 'Este QR Code não pertence ao SENAIgo.' });
+      return;
+    }
+    if (sala.salaId !== selectedRoom.salaId) {
+      setFeedback({ variant: 'warning', message: `Este QR Code é da área ${sala.sala}. Escaneie o QR Code de ${selectedRoom.sala}.` });
+      return;
+    }
+
+    // AJUSTE AQUI: condição que identifica se a sala é Modo Palestra
+    const ehModoPalestra = Boolean(sala.modoPalestra || sala.pergunta);
+
+    if (ehModoPalestra) {
+      setFeedback(null);
+      setQuizSala(sala); // Abre o questionário dentro do modal
+      return;
+    }
+
+    // Fluxo normal (salas sem questionário)
+    await concluirRegistroVisita(sala);
+  };
+
+  const handleResponderQuiz = async () => {
+    if (!opcaoEscolhida || !quizSala || enviandoQuiz) return;
+
+    setEnviandoQuiz(true);
+    // AJUSTE AQUI: nome do campo da resposta correta vinda do banco
+    const respostaCerta = String(quizSala.respostaCorreta || '').trim().toUpperCase();
+
+    if (opcaoEscolhida !== respostaCerta) {
+      setFeedback({
+        variant: 'error',
+        message: 'Resposta incorreta! Tente novamente para validar sua participação na palestra.',
+      });
+      setEnviandoQuiz(false);
+      return;
+    }
+
+    // Acertou! Registra a visita e dá os pontos
+    await concluirRegistroVisita(quizSala);
+    setEnviandoQuiz(false);
   };
 
   return (
@@ -120,8 +168,12 @@ const Home = () => {
         </section>
       </main>
 
-      <Modal isOpen={Boolean(selectedRoom)} onClose={handleCloseScanner} title={`Escanear: ${selectedRoom?.sala}`}>
-        {selectedRoom && (
+      <Modal
+        isOpen={Boolean(selectedRoom)}
+        onClose={handleCloseScanner}
+        title={quizSala ? `Quiz: ${quizSala.sala}` : `Escanear: ${selectedRoom?.sala}`}
+      >
+        {selectedRoom && !quizSala && (
           <div className={styles.scannerModalContent}>
             <p className={styles.scannerInstructions}>
               Aponte a câmera do seu dispositivo para o QR Code localizado na área de <strong>{selectedRoom.sala}</strong>.
@@ -130,8 +182,57 @@ const Home = () => {
             {feedback && <Alert variant={feedback.variant}>{feedback.message}</Alert>}
           </div>
         )}
+
+        {quizSala && (
+          <div className={styles.scannerModalContent}>
+            <p className={styles.scannerInstructions}>
+              <strong>{quizSala.pergunta}</strong>
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', margin: '1rem 0' }}>
+              <Button
+                type="button"
+                variant={opcaoEscolhida === 'A' ? 'primary' : 'outline'}
+                fullWidth
+                disabled={enviandoQuiz}
+                onClick={() => {
+                  setOpcaoEscolhida('A');
+                  setFeedback(null);
+                }}
+              >
+                A) {quizSala.opcaoA}
+              </Button>
+
+              <Button
+                type="button"
+                variant={opcaoEscolhida === 'B' ? 'primary' : 'outline'}
+                fullWidth
+                disabled={enviandoQuiz}
+                onClick={() => {
+                  setOpcaoEscolhida('B');
+                  setFeedback(null);
+                }}
+              >
+                B) {quizSala.opcaoB}
+              </Button>
+            </div>
+
+            {feedback && <Alert variant={feedback.variant}>{feedback.message}</Alert>}
+
+            <Button
+              type="button"
+              fullWidth
+              loading={enviandoQuiz}
+              disabled={!opcaoEscolhida || enviandoQuiz}
+              onClick={handleResponderQuiz}
+            >
+              Confirmar Resposta
+            </Button>
+          </div>
+        )}
       </Modal>
     </div>
   );
 };
+
 export default Home;
