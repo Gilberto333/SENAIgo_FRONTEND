@@ -47,10 +47,10 @@ const Home = () => {
     setFeedback(null);
   }, []);
 
-  const concluirRegistroVisita = async (sala) => {
+  const concluirRegistroVisita = async (sala, resposta = undefined) => {
     setFeedback({ variant: 'info', message: 'Registrando sua visita...' });
     try {
-      const { visitaId } = await registrarVisita({ salaId: sala.salaId });
+      const { visitaId } = await registrarVisita({ salaId: sala.salaId, resposta });
       setFeedback({ variant: 'success', message: `Visita registrada com sucesso! +${sala.pontos} pontos.` });
       closeTimer.current = setTimeout(() => {
         if (visitaId) {
@@ -109,40 +109,11 @@ const Home = () => {
     if (!opcaoEscolhida || !quizSala || enviandoQuiz) return;
 
     setEnviandoQuiz(true);
-
-    const questaoObj = quizSala.questao || {};
-    const valorBanco = String(
-      questaoObj.correta ??
-      questaoObj.respostaCorreta ??
-      questaoObj.resposta_correta ??
-      quizSala.correta ??
-      quizSala.respostaCorreta ??
-      quizSala.resposta_correta ??
-      quizSala.alternativaCorreta ??
-      ''
-    ).trim().toUpperCase();
-
-    const letraEscolhida = String(opcaoEscolhida).trim().toUpperCase();
-    const opcoes = obterOpcoesQuiz(quizSala);
-    const textoEscolhido = String(
-      opcoes.find(([letra]) => letra.toUpperCase() === letraEscolhida)?.[1] || ''
-    ).trim().toUpperCase();
-
-    const acertou =
-      valorBanco !== '' &&
-      (letraEscolhida === valorBanco || (textoEscolhido !== '' && textoEscolhido === valorBanco));
-
-    if (!acertou) {
-      setFeedback({
-        variant: 'error',
-        message: `Incorreta! Debug -> Escolhida: "${letraEscolhida}" | Banco: "${valorBanco}" | Chaves: ${Object.keys(quizSala).join(', ')} | Questao: ${JSON.stringify(quizSala.questao || {})}`,
-      });
+    try {
+      await concluirRegistroVisita(quizSala, opcaoEscolhida);
+    } finally {
       setEnviandoQuiz(false);
-      return;
     }
-
-    await concluirRegistroVisita(quizSala);
-    setEnviandoQuiz(false);
   };
 
   return (
@@ -256,4 +227,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Home;  

@@ -64,13 +64,13 @@ export const ProgressoProvider = ({ children }) => {
     [visits, salas],
   );
 
-    const registrarVisita = useCallback(async ({ salaId }) => {
+  const registrarVisita = useCallback(async ({ salaId, resposta }) => {
     if (visitedRooms.includes(salaId)) {
       throw new ApiError('Você já visitou esta área.', { status: 409 });
     }
     let localDeVisita;
     try {
-      ({ localDeVisita } = await visitasService.registrarVisita({ salaId }));
+      ({ localDeVisita } = await visitasService.registrarVisita({ salaId, resposta }));
       setVisits((prev) => [...prev, localDeVisita]);
     } catch (err) {
       if (err.status === 409) sincronizar();
