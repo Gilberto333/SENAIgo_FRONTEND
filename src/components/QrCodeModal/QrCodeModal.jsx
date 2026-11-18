@@ -341,7 +341,7 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
         </Button>
       )}
 
-      {/* Seção Modo Palestra */}
+      {/* Seção Modo Palestra
       <div className={styles.sectionDivider}>
         <Button
           type="button"
@@ -429,7 +429,7 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
             {salvandoPalestra ? 'Salvando...' : 'Salvar Modo Palestra'}
           </Button>
         </div>
-      </div>
+      </div> */}
 
       {/* Painel de Controle de Tempo e Bloqueio */}
       <div className={styles.sectionDivider}>
