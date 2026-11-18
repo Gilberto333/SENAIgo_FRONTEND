@@ -65,31 +65,32 @@ const Home = () => {
   };
 
   const handleDetect = async (text) => {
-    // Se o quiz já estiver aberto na tela, ignora novas leituras da câmera
     if (quizSala) return;
 
-    const salaId = parseQrPayload(text);
-    const sala = salas.find((item) => item.salaId === salaId);
+    const payload = parseQrPayload(text);
+    const salaId = payload?.id;
+    const sala = salas.find((item) => Number(item.salaId) === Number(salaId));
 
     if (!sala) {
       setFeedback({ variant: 'warning', message: 'Este QR Code não pertence ao SENAIgo.' });
       return;
     }
-    if (sala.salaId !== selectedRoom.salaId) {
-      setFeedback({ variant: 'warning', message: `Este QR Code é da área ${sala.sala}. Escaneie o QR Code de ${selectedRoom.sala}.` });
+    if (Number(sala.salaId) !== Number(selectedRoom.salaId)) {
+      setFeedback({
+        variant: 'warning',
+        message: `Este QR Code é da área ${sala.sala}. Escaneie o QR Code de ${selectedRoom.sala}.`,
+      });
       return;
     }
 
-    // AJUSTE AQUI: condição que identifica se a sala é Modo Palestra
-    const ehModoPalestra = Boolean(sala.modoPalestra || sala.pergunta);
+    const ehModoPalestra = Boolean(sala.modoPalestra && (sala.questao?.pergunta || sala.pergunta));
 
     if (ehModoPalestra) {
       setFeedback(null);
-      setQuizSala(sala); // Abre o questionário dentro do modal
+      setQuizSala(sala);
       return;
     }
 
-    // Fluxo normal (salas sem questionário)
     await concluirRegistroVisita(sala);
   };
 
@@ -97,8 +98,9 @@ const Home = () => {
     if (!opcaoEscolhida || !quizSala || enviandoQuiz) return;
 
     setEnviandoQuiz(true);
-    // AJUSTE AQUI: nome do campo da resposta correta vinda do banco
-    const respostaCerta = String(quizSala.respostaCorreta || '').trim().toUpperCase();
+    const respostaCerta = String(quizSala.questao?.correta || quizSala.respostaCorreta || '')
+      .trim()
+      .toUpperCase();
 
     if (opcaoEscolhida !== respostaCerta) {
       setFeedback({
@@ -109,9 +111,19 @@ const Home = () => {
       return;
     }
 
-    // Acertou! Registra a visita e dá os pontos
     await concluirRegistroVisita(quizSala);
     setEnviandoQuiz(false);
+  };
+
+  const obterOpcoesQuiz = (sala) => {
+    if (!sala) return [];
+    if (sala.questao?.alternativas) {
+      return Object.entries(sala.questao.alternativas).filter(([, texto]) => Boolean(texto));
+    }
+    return [
+      ['A', sala.opcaoA],
+      ['B', sala.opcaoB],
+    ].filter(([, texto]) => Boolean(texto));
   };
 
   return (
@@ -186,35 +198,25 @@ const Home = () => {
         {quizSala && (
           <div className={styles.scannerModalContent}>
             <p className={styles.scannerInstructions}>
-              <strong>{quizSala.pergunta}</strong>
+              <strong>{quizSala.questao?.pergunta || quizSala.pergunta}</strong>
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', margin: '1rem 0' }}>
-              <Button
-                type="button"
-                variant={opcaoEscolhida === 'A' ? 'primary' : 'outline'}
-                fullWidth
-                disabled={enviandoQuiz}
-                onClick={() => {
-                  setOpcaoEscolhida('A');
-                  setFeedback(null);
-                }}
-              >
-                A) {quizSala.opcaoA}
-              </Button>
-
-              <Button
-                type="button"
-                variant={opcaoEscolhida === 'B' ? 'primary' : 'outline'}
-                fullWidth
-                disabled={enviandoQuiz}
-                onClick={() => {
-                  setOpcaoEscolhida('B');
-                  setFeedback(null);
-                }}
-              >
-                B) {quizSala.opcaoB}
-              </Button>
+              {obterOpcoesQuiz(quizSala).map(([letra, texto]) => (
+                <Button
+                  key={letra}
+                  type="button"
+                  variant={opcaoEscolhida === letra ? 'primary' : 'outline'}
+                  fullWidth
+                  disabled={enviandoQuiz}
+                  onClick={() => {
+                    setOpcaoEscolhida(letra);
+                    setFeedback(null);
+                  }}
+                >
+                  {letra}) {texto}
+                </Button>
+              ))}
             </div>
 
             {feedback && <Alert variant={feedback.variant}>{feedback.message}</Alert>}
