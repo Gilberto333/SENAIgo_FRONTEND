@@ -4,6 +4,7 @@ import Modal from '../Modal/Modal';
 import Button from '../Button/Button';
 import Alert from '../Alert/Alert';
 import Input from '../Input/Input';
+import api from '../../services/api';
 import { buildQrPayload } from '../../utils/qrCode';
 import {
   Download,
@@ -174,27 +175,14 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
 
       const dataFormatada = bloqueadaAte ? new Date(bloqueadaAte).toISOString() : null;
 
-      const response = await fetch(`http://localhost:3000/bloquearLeitura/${sala.salaId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({
-          bloquear_leitura: bloquearLeitura,
-          bloqueada_ate: dataFormatada,
-        }),
+      const { data } = await api.patch(`/bloquearLeitura/${sala.salaId}`, {
+        bloquear_leitura: bloquearLeitura,
+        bloqueada_ate: dataFormatada,
       });
 
-      const dados = await response.json();
-
-      if (!response.ok) {
-        throw new Error(dados.erro || 'Falha ao salvar configuração.');
-      }
-
       setSucesso('Regras de leitura salvas com sucesso!');
-      if (onAtualizarSala) {
-        onAtualizarSala(dados.sala);
+      if (onAtualizarSala && data?.sala) {
+        onAtualizarSala(data.sala);
       }
     } catch (err) {
       setError(err.message || 'Erro ao salvar o horário/bloqueio da sala.');
@@ -249,20 +237,7 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
           : null,
       };
 
-      const response = await fetch(`http://localhost:3000/atualizarSala/${sala.salaId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const dados = await response.json();
-
-      if (!response.ok) {
-        throw new Error(dados.erro || 'Falha ao salvar Modo Palestra.');
-      }
+      const { data } = await api.put(`/atualizarSala/${sala.salaId}`, payload);
 
       setSucesso(
         modoPalestra
@@ -270,8 +245,8 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
           : 'Modo Palestra desativado com sucesso!'
       );
 
-      if (onAtualizarSala) {
-        onAtualizarSala(dados.sala);
+      if (onAtualizarSala && data?.sala) {
+        onAtualizarSala(data.sala);
       }
     } catch (err) {
       setError(err.message || 'Erro ao salvar Modo Palestra.');
@@ -285,6 +260,7 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
       {error && <Alert variant="error">{error}</Alert>}
       {sucesso && <Alert variant="success">{sucesso}</Alert>}
 
+      {/* Botão Preset Lendário */}
       <div className={styles.legendaryWrapper}>
         <button type="button" onClick={ativarModoLendario} className={styles.legendaryBtn}>
           <Sparkles size={16} />
@@ -365,6 +341,7 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
         </Button>
       )}
 
+      {/* Seção Modo Palestra */}
       <div className={styles.sectionDivider}>
         <Button
           type="button"
@@ -454,6 +431,7 @@ const QrCodeContent = ({ sala, onAtualizarSala }) => {
         </div>
       </div>
 
+      {/* Painel de Controle de Tempo e Bloqueio */}
       <div className={styles.sectionDivider}>
         <p className={styles.sectionTitle}>Controle de Leitura do QR Code</p>
 
