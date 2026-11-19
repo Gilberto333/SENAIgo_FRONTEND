@@ -43,7 +43,6 @@ const Loja = () => {
 
   return (
     <div className={styles.pageContainer}>
-      {/* Barra superior estilo App (Título + Saldo) */}
       <header className={styles.topBar}>
         <div className={styles.topBarSpacer} />
         <h1 className={styles.pageTitle}>Loja</h1>
@@ -54,7 +53,6 @@ const Loja = () => {
       </header>
 
       <main className={styles.mainContent}>
-        {/* Banner mantendo a cor original e com texto resumido */}
         <section className={styles.bannerLoja}>
           <div className={styles.bannerInfo}>
             <div className={styles.tagLoja}>
@@ -80,7 +78,6 @@ const Loja = () => {
           </div>
         )}
 
-        {/* Seção 1: Grid compacto estilo "Your items" */}
         <section className={styles.sectionBlock}>
           <h3 className={styles.sectionTitle}>Brindes disponíveis</h3>
 
@@ -122,7 +119,6 @@ const Loja = () => {
           </div>
         </section>
 
-        {/* Seção 2: Lista horizontal estilo "One-time rewards" */}
         <section className={styles.sectionBlock}>
           <h3 className={styles.sectionTitle}>Meus Resgates</h3>
 

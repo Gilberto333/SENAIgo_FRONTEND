@@ -7,6 +7,7 @@ import Login from '../pages/Login/Login';
 import EsqueciSenha from '../pages/EsqueciSenha/EsqueciSenha'; 
 import Home from '../pages/Home/Home';
 import Loja from '../pages/Loja/Loja';
+import Perfil from '../pages/Perfil/Perfil';
 import SalasVisitas from '../pages/SalasVisitas/SalasVisitas'; 
 import GerenciarLoja from '../pages/GerenciarLoja/GerenciarLoja';
 import GerenciarSalas from '../pages/GerenciarSalas/GerenciarSalas';
@@ -26,6 +27,7 @@ const AppRoutes = () => (
       <Route path="/esqueci-senha" element={<EsqueciSenha />} /> 
       <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
       <Route path="/loja" element={<PrivateRoute><Loja /></PrivateRoute>} />
+      <Route path="/perfil" element={<PrivateRoute><Perfil /></PrivateRoute>} />
       <Route path="/salas-visitas" element={<PrivateRoute><SalasVisitas /></PrivateRoute>} />
       <Route path="/admin/loja" element={<PrivateRoute adminOnly><GerenciarLoja /></PrivateRoute>} />
       <Route path="/admin/salas" element={<PrivateRoute adminOnly><GerenciarSalas /></PrivateRoute>} />

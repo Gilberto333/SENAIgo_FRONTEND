@@ -4,7 +4,6 @@
   padding-bottom: 84px;
 }
 
-/* Topo limpo */
 .topBar {
   display: flex;
   align-items: center;
@@ -46,7 +45,6 @@
   gap: 24px;
 }
 
-/* Banner mantendo o tom terracota da imagem original */
 .bannerLoja {
   background: linear-gradient(135deg, #b84a27 0%, #96381b 100%);
   border-radius: 18px;
@@ -88,7 +86,12 @@
   flex-shrink: 0;
 }
 
-/* Seções */
+.errorBox {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .sectionBlock {
   display: flex;
   flex-direction: column;
@@ -102,7 +105,6 @@
   margin: 0;
 }
 
-/* Grid de 3 colunas ("Your items") */
 .itemsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -177,7 +179,6 @@
   color: #b84a27;
 }
 
-/* Lista horizontal ("One-time rewards") */
 .rewardsList {
   display: flex;
   flex-direction: column;
