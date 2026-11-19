@@ -1,23 +1,28 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useProgresso } from '../../hooks/useProgresso';
 import Header from '../../components/Header/Header';
+import BottomNav from '../../components/BottomNav/BottomNav';
 import { useNavigate } from 'react-router-dom';
-import Card from '../../components/Card/Card';
 import Alert from '../../components/Alert/Alert';
-import ScannerButton from '../../components/ScannerButton/ScannerButton';
 import QrScanner from '../../components/QrScanner/QrScanner';
 import Modal from '../../components/Modal/Modal';
 import ProgressBar from '../../components/ProgressBar/ProgressBar';
-import { getSalaIcon } from '../../constants/salaIcons';
 import { parseQrPayload } from '../../utils/qrCode';
 import Button from '../../components/Button/Button';
-import { Sparkles, RefreshCw } from 'lucide-react';
+import { Sparkles, RefreshCw, Route, LayoutList } from 'lucide-react';
+import TrilhaDuolingo from '../../components/TrilhaDuolingo/TrilhaDuolingo';
+import ListaSalasMimo from '../../components/ListaSalasMimo/ListaSalasMimo';
 import styles from './Home.module.css';
 
 const CLOSE_DELAY_MS = 1400;
 
 const Home = () => {
   const { salas, visitedRooms, registrarVisita, loading, error, recarregar } = useProgresso();
+
+  const [viewMode, setViewMode] = useState(() => {
+    return localStorage.getItem('senaigo_home_view') || 'trilha';
+  });
+
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [feedback, setFeedback] = useState(null);
 
@@ -30,6 +35,11 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => () => clearTimeout(closeTimer.current), []);
+
+  const handleChangeView = (mode) => {
+    setViewMode(mode);
+    localStorage.setItem('senaigo_home_view', mode);
+  };
 
   const handleOpenScanner = (sala) => {
     if (visitedRooms.includes(sala.salaId)) return;
@@ -124,52 +134,76 @@ const Home = () => {
         {error && (
           <div className={styles.syncAlert}>
             <Alert variant="warning">{error}</Alert>
-            <Button variant="outline" icon={RefreshCw} onClick={recarregar}>Tentar novamente</Button>
+            <Button variant="outline" icon={RefreshCw} onClick={recarregar}>
+              Tentar novamente
+            </Button>
           </div>
         )}
-        <section className={styles.welcomeBanner}>
-          <div className={styles.bannerInfo}>
-            <div className={styles.tagGroup}><Sparkles size={16} /><span>Jornada de Gamificação</span></div>
-            <h2>Explore as Áreas e Ganhe Pontos</h2>
-            <p>Escaneie os QR Codes localizados nos ambientes do SENAI para acumular pontos e resgatar brindes.</p>
+
+        {/* Banner Superior */}
+        <section className={styles.unitHeader}>
+          <div className={styles.unitHeaderTop}>
+            <span className={styles.unitTag}>
+              <Sparkles size={14} /> JORNADA DE GAMIFICAÇÃO
+            </span>
+            <span className={styles.unitCount}>
+              {visitedRooms.length}/{salas.length} concluídas
+            </span>
           </div>
-          <div className={styles.progressCard}>
-            <ProgressBar current={visitedRooms.length} total={salas.length} label="Progresso de Visitas" />
+          <h2 className={styles.unitTitle}>Explore as Áreas e Ganhe Pontos</h2>
+          <p className={styles.unitSubtitle}>
+            Escaneie os QR Codes nos ambientes do SENAI para acumular pontos.
+          </p>
+          <div className={styles.unitProgressWrapper}>
+            <ProgressBar current={visitedRooms.length} total={salas.length} />
           </div>
         </section>
 
-        <section className={styles.cardsSection}>
-          <h3 className={styles.sectionTitle}>Áreas Disponíveis para Leitura</h3>
-          <div className={styles.gridCards}>
-            {salas.map((item) => {
-              const isVisited = visitedRooms.includes(item.salaId);
-              const RoomIcon = getSalaIcon(item.icone);
-              return (
-                <Card key={item.salaId} className={`${styles.roomCard} ${isVisited ? styles.cardCompleted : ''}`}>
-                  <div className={styles.cardHeader}>
-                    <div className={styles.roomBadgeIcon}><RoomIcon size={24} /></div>
-                    <div className={styles.pointsTag}>+{item.pontos} Pts</div>
-                  </div>
-                  <div className={styles.cardBody}>
-                    <h4 className={styles.roomTitle}>{item.sala}</h4>
-                    <p className={styles.roomDesc}>{item.descricao}</p>
-                    <div className={styles.statusIndicator}>
-                      <span>Status: </span>
-                      <span className={isVisited ? styles.statusVisited : styles.statusPending}>
-                        {isVisited ? 'Visitado ' : 'Não visitado'}
-                      </span>
-                    </div>
-                  </div>
-                  <div className={styles.cardFooter}>
-                    <ScannerButton isVisited={isVisited} onClick={() => handleOpenScanner(item)} disabled={isVisited} />
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-        </section>
+        {/* Seletor de Visualização (Trilha vs Lista) */}
+        <div className={styles.viewSwitcher} role="tablist" aria-label="Modo de exibição">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={viewMode === 'trilha'}
+            className={`${styles.switchBtn} ${viewMode === 'trilha' ? styles.switchBtnActive : ''}`}
+            onClick={() => handleChangeView('trilha')}
+          >
+            <Route size={17} />
+            Trilha
+          </button>
+
+          <button
+            type="button"
+            role="tab"
+            aria-selected={viewMode === 'lista'}
+            className={`${styles.switchBtn} ${viewMode === 'lista' ? styles.switchBtnActive : ''}`}
+            onClick={() => handleChangeView('lista')}
+          >
+            <LayoutList size={17} />
+            Lista Rápida
+          </button>
+        </div>
+
+        {/* Renderização Condicional dos Dois Componentes */}
+        {viewMode === 'trilha' ? (
+          <TrilhaDuolingo
+            salas={salas}
+            visitedRooms={visitedRooms}
+            onOpenScanner={handleOpenScanner}
+          />
+        ) : (
+          <ListaSalasMimo
+            salas={salas}
+            visitedRooms={visitedRooms}
+            onOpenScanner={handleOpenScanner}
+          />
+        )}
       </main>
 
+      {/* Navegação Inferior Flutuante */}
+      <BottomNav />
+
+      {/* Modal do Scanner e Quiz */}
       <Modal
         isOpen={Boolean(selectedRoom)}
         onClose={handleCloseScanner}
@@ -178,7 +212,8 @@ const Home = () => {
         {selectedRoom && !quizSala && (
           <div className={styles.scannerModalContent}>
             <p className={styles.scannerInstructions}>
-              Aponte a câmera do seu dispositivo para o QR Code localizado na área de <strong>{selectedRoom.sala}</strong>.
+              Aponte a câmera do seu dispositivo para o QR Code localizado na área de{' '}
+              <strong>{selectedRoom.sala}</strong>.
             </p>
             <QrScanner onDetect={handleDetect} />
             {feedback && <Alert variant={feedback.variant}>{feedback.message}</Alert>}
@@ -227,4 +262,4 @@ const Home = () => {
   );
 };
 
-export default Home;  
+export default Home;

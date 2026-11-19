@@ -5,7 +5,6 @@
 .greetingBox { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; color: var(--primary-blue); background-color: rgba(45, 67, 115, 0.06); padding: 6px 14px; border-radius: 20px; }
 .userIcon { color: var(--primary-blue); }
 
-
 .menuBtn { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 40px; height: 40px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-light); color: var(--primary-blue); cursor: pointer; transition: all 0.2s; }
 .menuBtn:hover { background-color: var(--primary-blue); border-color: var(--primary-blue); color: #ffffff; }
 
@@ -16,7 +15,6 @@
 .navBtn { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; color: var(--primary-blue); transition: all 0.2s; }
 .navBtn:hover, .navBtn.active { background-color: var(--primary-blue); color: #ffffff; }
 
-
 .rewardBtn { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; white-space: nowrap; color: #ffffff; background-color: var(--primary-blue); transition: all 0.2s; }
 .rewardIcon { color: #FDE68A; flex-shrink: 0; }
 .rewardBtn:hover { background-color: var(--terracotta); } 
@@ -25,37 +23,9 @@
 .rewardBtn.backBtn:hover { background-color: #B45309; }
 .backBtn .rewardIcon { color: #ffffff; }
 
-.navBtn { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; color: var(--primary-blue); transition: all 0.2s; }
-.navBtn:hover, .navBtn.active { background-color: var(--primary-blue); color: #ffffff; }
-
 .navBtn.adminBackBtn { background-color: #D97706; color: #ffffff; }
 .navBtn.adminBackBtn:hover { background-color: #B45309; }
 
-
 @media (max-width: 768px) {
-  .container { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 8px 12px; }
-  .leftSection { grid-column: 1; grid-row: 1; gap: 8px; } 
-  .menuBtn { width: 36px; height: 36px; }
-  .rightSection { display: contents; } 
-  .pointsPill { grid-column: 2; grid-row: 1; justify-self: end; white-space: nowrap; padding: 5px 12px; font-size: 0.85rem; }
-  .centerSection { grid-column: 1; grid-row: 2; min-width: 0; }
-  .greetingBox { flex: 1; min-width: 0; font-size: 0.82rem; padding: 5px 12px; }
-  .greetingBox span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .navLinks { grid-column: 2; grid-row: 2; gap: 4px; justify-content: flex-end; }
-  .navBtn { padding: 8px; }
-  .navBtn span { display: none; }
-  .rewardBtn { padding: 7px 10px; font-size: 0.78rem; gap: 5px; } 
-}
-
-@media (max-width: 360px) {
-  .leftSection { gap: 6px; } 
-  .menuBtn { width: 34px; height: 34px; } 
-  .userIcon { display: none; }
-  .greetingBox { padding: 5px 10px; font-size: 0.78rem; }
-  .pointsPill { padding: 4px 10px; font-size: 0.8rem; }
-  .rewardBtn { padding: 7px 8px; font-size: 0.74rem; }
-}
-
-@media (max-height: 480px) {
-  .header { position: static; }
+  .header { display: none; }
 }

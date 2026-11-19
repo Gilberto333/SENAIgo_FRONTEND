@@ -1,0 +1,132 @@
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding-top: 0.25rem;
+}
+
+.listHeading {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.cardsStack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.rowCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background-color: #1e293b;
+  color: #ffffff;
+  padding: 0.95rem 1.15rem;
+  border-radius: 18px;
+  border: 2px solid #334155;
+  box-shadow: 0 4px 0 #0f172a;
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.2s ease, background-color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rowCard:hover:not(.rowCardVisited) {
+  border-color: #ea580c;
+  background-color: #253349;
+}
+
+.rowCard:active:not(.rowCardVisited) {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #0f172a;
+}
+
+.rowCardVisited {
+  background-color: #f1f5f9;
+  color: #334155;
+  border-color: #cbd5e1;
+  box-shadow: 0 3px 0 #cbd5e1;
+  cursor: default;
+}
+
+.leftContent {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.roomIconBox {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fbbf24;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rowCardVisited .roomIconBox {
+  background: #e2e8f0;
+  color: #64748b;
+}
+
+.roomTextGroup {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.roomName {
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.roomPoints {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-top: 0.15rem;
+}
+
+.rowCardVisited .roomPoints {
+  color: #16a34a;
+}
+
+.qrCircleBtn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 3px solid #ea580c;
+  background-color: #ea580c;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #9a3412;
+  transition: transform 0.1s ease, background-color 0.2s ease;
+}
+
+.qrCircleBtn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #9a3412;
+}
+
+.qrCircleCompleted {
+  background-color: #facc15;
+  border-color: #eab308;
+  color: #713f12;
+  box-shadow: none;
+  cursor: default;
+}

@@ -3,6 +3,7 @@ import { useProgresso } from '../../hooks/useProgresso';
 import { useProdutos } from '../../hooks/useProdutos';
 import { useResgates } from '../../hooks/useResgates';
 import Header from '../../components/Header/Header';
+import BottomNav from '../../components/BottomNav/BottomNav';
 import Card from '../../components/Card/Card';
 import Button from '../../components/Button/Button';
 import Alert from '../../components/Alert/Alert';
@@ -30,7 +31,6 @@ const Loja = () => {
     } catch (err) {
       setFeedback({ variant: 'error', message: err.message });
     } finally {
-      
       await Promise.allSettled([atualizarSaldo(), recarregarProdutos({ silencioso: true }), recarregarResgates()]);
       setResgatando(false);
       setProdutoSelecionado(null);
@@ -103,10 +103,13 @@ const Loja = () => {
         </section>
       </main>
 
+      <BottomNav />
+
       <ConfirmModal isOpen={Boolean(produtoSelecionado)} title="Confirmar resgate" confirmLabel="Resgatar" loading={resgatando} onConfirm={handleConfirmarResgate} onCancel={fecharConfirmacao}>
         {produtoSelecionado && <>Deseja trocar <strong>{produtoSelecionado.pontos} pontos</strong> por <strong>{produtoSelecionado.nome}</strong>?</>}
       </ConfirmModal>
     </div>
   );
 };
+
 export default Loja;

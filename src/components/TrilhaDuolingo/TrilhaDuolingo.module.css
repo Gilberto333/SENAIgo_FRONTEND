@@ -1,0 +1,289 @@
+.pathContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 1.5rem 0 2rem;
+  position: relative;
+}
+
+.nodeWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.25s ease;
+}
+
+.floatingCallout {
+  position: absolute;
+  top: -36px;
+  background: #ffffff;
+  color: #c2410c;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 0.35rem 0.75rem;
+  border-radius: 10px;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 3px 0 #e2e8f0;
+  cursor: pointer;
+  animation: bounceFloat 1.6s infinite ease-in-out;
+  z-index: 5;
+  white-space: nowrap;
+}
+
+.floatingCallout::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background: #ffffff;
+  border-right: 2px solid #e2e8f0;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.pathNode {
+  position: relative;
+  width: 76px;
+  height: 72px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pathNode:active {
+  transform: translateY(5px);
+}
+
+.nodeCurrent {
+  background: #ea580c;
+  color: #ffffff;
+  box-shadow: 0 6px 0 #9a3412;
+}
+
+.nodeCurrent:active {
+  box-shadow: 0 1px 0 #9a3412;
+}
+
+.nodePending {
+  background: #e2e8f0;
+  color: #475569;
+  box-shadow: 0 6px 0 #94a3b8;
+}
+
+.nodePending:active {
+  box-shadow: 0 1px 0 #94a3b8;
+}
+
+.nodeCompleted {
+  background: #facc15;
+  color: #713f12;
+  box-shadow: 0 6px 0 #ca8a04;
+}
+
+.nodeCompleted:active {
+  box-shadow: 0 1px 0 #ca8a04;
+}
+
+.nodeRing {
+  outline: 4px solid rgba(234, 88, 12, 0.28);
+  outline-offset: 4px;
+}
+
+.nodePointsBadge {
+  position: absolute;
+  bottom: -4px;
+  right: -6px;
+  background: #1e293b;
+  color: #fbbf24;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 2px solid #ffffff;
+}
+
+.nodeLabel {
+  margin-top: 0.55rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #334155;
+  text-align: center;
+  max-width: 140px;
+  line-height: 1.2;
+}
+
+.dotsConnector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.pathDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: #cbd5e1;
+  box-shadow: 0 2px 0 #94a3b8;
+  transition: background-color 0.25s ease, transform 0.25s ease;
+}
+
+.pathDot:nth-child(2) {
+  width: 11px;
+  height: 11px;
+}
+
+.pathDotCompleted {
+  background-color: #facc15;
+  box-shadow: 0 2px 0 #ca8a04;
+}
+
+.popoverCard {
+  margin-top: 0.85rem;
+  width: 280px;
+  background: #ea580c;
+  color: #ffffff;
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 6px 0 #9a3412, 0 12px 24px rgba(15, 23, 42, 0.18);
+  z-index: 20;
+  animation: popIn 0.18s ease-out;
+}
+
+.popoverCompleted {
+  background: #eab308;
+  color: #422006;
+  box-shadow: 0 6px 0 #a16207, 0 12px 24px rgba(15, 23, 42, 0.15);
+}
+
+.popoverHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.popoverPoints {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+.popoverTitle {
+  margin: 0.15rem 0 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.popoverClose {
+  background: rgba(0, 0, 0, 0.15);
+  border: none;
+  color: inherit;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.popoverDesc {
+  margin: 0.5rem 0 0.85rem;
+  font-size: 0.84rem;
+  line-height: 1.35;
+  opacity: 0.95;
+}
+
+.popoverActionBtn {
+  width: 100%;
+  margin-top: 0.5rem;
+  background: #ffffff;
+  color: #c2410c;
+  border: none;
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #fed7aa;
+  transition: transform 0.1s ease;
+}
+
+.popoverActionBtn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #fed7aa;
+}
+
+.completedBadge {
+  margin-top: 0.65rem;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 10px;
+  padding: 0.55rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.trophyWrapper {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.trophyNode {
+  width: 84px;
+  height: 78px;
+  border-radius: 24px;
+  background: #e2e8f0;
+  color: #94a3b8;
+  box-shadow: 0 6px 0 #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trophyUnlocked {
+  background: linear-gradient(135deg, #facc15, #f59e0b);
+  color: #713f12;
+  box-shadow: 0 6px 0 #b45309;
+}
+
+.trophyLabel {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #64748b;
+  text-align: center;
+}
+
+@keyframes bounceFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.94) translateY(-4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}

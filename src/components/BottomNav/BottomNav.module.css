@@ -1,0 +1,76 @@
+.bottomNavWrapper {
+  display: none; /* Oculto no PC/Desktop */
+}
+
+@media (max-width: 768px) {
+  .bottomNavWrapper {
+    display: flex; /* Visível apenas no celular */
+    position: fixed;
+    bottom: 14px;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    justify-content: center;
+    padding: 0 1rem;
+    pointer-events: none;
+  }
+}
+
+.pillContainer {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(15, 23, 42, 0.06);
+}
+
+.navItem {
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.22rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  color: #64748b;
+  cursor: pointer;
+  transition: color 0.18s ease, transform 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.navItem:active {
+  transform: scale(0.94);
+}
+
+.navItemActive {
+  color: #0f172a;
+}
+
+.navIcon {
+  transition: transform 0.18s ease;
+}
+
+.navItemActive .navIcon {
+  color: #ea580c;
+  transform: translateY(-1px);
+}
+
+.navLabel {
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.navItemActive .navLabel {
+  font-weight: 800;
+  color: #0f172a;
+}
