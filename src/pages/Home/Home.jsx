@@ -23,7 +23,9 @@ const Home = () => {
     return localStorage.getItem('senaigo_home_view') || 'trilha';
   });
 
-  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null); // Opcional: usado se clicar numa sala específica na trilha
+  const [detectedSala, setDetectedSala] = useState(null);
   const [feedback, setFeedback] = useState(null);
 
   // Estados para o Questionário do Modo Palestra
@@ -41,27 +43,48 @@ const Home = () => {
     localStorage.setItem('senaigo_home_view', mode);
   };
 
-  const handleOpenScanner = (sala) => {
-    if (visitedRooms.includes(sala.salaId)) return;
+  // Abre o scanner livre (botão único)
+  const handleOpenGlobalScanner = () => {
     setFeedback(null);
+    setSelectedRoom(null);
+    setDetectedSala(null);
     setQuizSala(null);
     setOpcaoEscolhida(null);
+    setIsScannerOpen(true);
+  };
+
+  // Abre o scanner travado em uma sala específica (caso clique num nó da Trilha)
+  const handleOpenRoomScanner = (sala) => {
+    if (visitedRooms.includes(sala.salaId)) return;
+    setFeedback(null);
     setSelectedRoom(sala);
+    setDetectedSala(null);
+    setQuizSala(null);
+    setOpcaoEscolhida(null);
+    setIsScannerOpen(true);
   };
 
   const handleCloseScanner = useCallback(() => {
     clearTimeout(closeTimer.current);
+    setIsScannerOpen(false);
     setSelectedRoom(null);
+    setDetectedSala(null);
     setQuizSala(null);
     setOpcaoEscolhida(null);
     setFeedback(null);
   }, []);
 
   const concluirRegistroVisita = async (sala, resposta = undefined) => {
-    setFeedback({ variant: 'info', message: 'Registrando sua visita...' });
+    setFeedback({
+      variant: 'info',
+      message: `Área identificada: ${sala.sala}! Registrando sua visita...`,
+    });
     try {
       const { visitaId } = await registrarVisita({ salaId: sala.salaId, resposta });
-      setFeedback({ variant: 'success', message: `Visita registrada com sucesso! +${sala.pontos} pontos.` });
+      setFeedback({
+        variant: 'success',
+        message: `Área "${sala.sala}" concluída! +${sala.pontos} pontos.`,
+      });
       closeTimer.current = setTimeout(() => {
         if (visitaId) {
           navigate(`/avaliar-visita/${visitaId}`, { state: { salaNome: sala.sala } });
@@ -75,28 +98,46 @@ const Home = () => {
   };
 
   const handleDetect = async (text) => {
-    if (quizSala) return;
+    if (quizSala || detectedSala) return;
 
     const payload = parseQrPayload(text);
     const salaId = payload?.id;
     const sala = salas.find((item) => Number(item.salaId) === Number(salaId));
 
+    // 1. Verifica se o QR Code é válido
     if (!sala) {
-      setFeedback({ variant: 'warning', message: 'Este QR Code não pertence ao SENAIgo.' });
+      setFeedback({ variant: 'warning', message: 'Este QR Code não pertence a nenhuma área do SENAIgo.' });
       return;
     }
-    if (Number(sala.salaId) !== Number(selectedRoom.salaId)) {
+
+    // 2. Se o usuário clicou em uma sala específica na Trilha, valida se bate com ela
+    if (selectedRoom && Number(sala.salaId) !== Number(selectedRoom.salaId)) {
       setFeedback({
         variant: 'warning',
-        message: `Este QR Code é da área ${sala.sala}. Escaneie o QR Code de ${selectedRoom.sala}.`,
+        message: `Você leu o QR Code de "${sala.sala}", mas selecionou "${selectedRoom.sala}".`,
       });
       return;
     }
 
+    // 3. Verifica se a área identificada já foi concluída anteriormente
+    if (visitedRooms.includes(sala.salaId)) {
+      setFeedback({
+        variant: 'warning',
+        message: `QR Code lido: "${sala.sala}". Você já concluiu esta área!`,
+      });
+      return;
+    }
+
+    setDetectedSala(sala);
+
+    // 4. Verifica se a sala exige questionário (Modo Palestra)
     const ehModoPalestra = Boolean(sala.modoPalestra && (sala.questao?.pergunta || sala.pergunta));
 
     if (ehModoPalestra) {
-      setFeedback(null);
+      setFeedback({
+        variant: 'info',
+        message: `Área identificada: ${sala.sala}! Responda à pergunta para ganhar +${sala.pontos} pts.`,
+      });
       setQuizSala(sala);
       return;
     }
@@ -125,6 +166,14 @@ const Home = () => {
       setEnviandoQuiz(false);
     }
   };
+
+  const modalTitle = quizSala
+    ? `Quiz: ${quizSala.sala}`
+    : selectedRoom
+    ? `Escanear: ${selectedRoom.sala}`
+    : detectedSala
+    ? `Área: ${detectedSala.sala}`
+    : 'Escanear QR Code';
 
   return (
     <div className={styles.pageContainer}>
@@ -189,31 +238,37 @@ const Home = () => {
           <TrilhaDuolingo
             salas={salas}
             visitedRooms={visitedRooms}
-            onOpenScanner={handleOpenScanner}
+            onOpenScanner={handleOpenRoomScanner}
           />
         ) : (
           <ListaSalasMimo
             salas={salas}
             visitedRooms={visitedRooms}
-            onOpenScanner={handleOpenScanner}
+            onOpenGlobalScanner={handleOpenGlobalScanner}
           />
         )}
       </main>
 
-      {/* Navegação Inferior Flutuante */}
       <BottomNav />
 
       {/* Modal do Scanner e Quiz */}
       <Modal
-        isOpen={Boolean(selectedRoom)}
+        isOpen={isScannerOpen}
         onClose={handleCloseScanner}
-        title={quizSala ? `Quiz: ${quizSala.sala}` : `Escanear: ${selectedRoom?.sala}`}
+        title={modalTitle}
       >
-        {selectedRoom && !quizSala && (
+        {isScannerOpen && !quizSala && (
           <div className={styles.scannerModalContent}>
             <p className={styles.scannerInstructions}>
-              Aponte a câmera do seu dispositivo para o QR Code localizado na área de{' '}
-              <strong>{selectedRoom.sala}</strong>.
+              {selectedRoom ? (
+                <>
+                  Aponte a câmera para o QR Code da área <strong>{selectedRoom.sala}</strong>.
+                </>
+              ) : (
+                <>
+                  Aponte a câmera para o QR Code de qualquer ambiente do SENAI para identificá-lo automaticamente.
+                </>
+              )}
             </p>
             <QrScanner onDetect={handleDetect} />
             {feedback && <Alert variant={feedback.variant}>{feedback.message}</Alert>}

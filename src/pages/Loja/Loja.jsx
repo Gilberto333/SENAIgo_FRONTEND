@@ -2,14 +2,12 @@ import React, { useState } from 'react';
 import { useProgresso } from '../../hooks/useProgresso';
 import { useProdutos } from '../../hooks/useProdutos';
 import { useResgates } from '../../hooks/useResgates';
-import Header from '../../components/Header/Header';
 import BottomNav from '../../components/BottomNav/BottomNav';
-import Card from '../../components/Card/Card';
 import Button from '../../components/Button/Button';
 import Alert from '../../components/Alert/Alert';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import { formatDate } from '../../utils/formatters';
-import { Gift, Trophy, Sparkles, RefreshCw } from 'lucide-react';
+import { Trophy, Sparkles, RefreshCw, CheckCircle2 } from 'lucide-react';
 import styles from './Loja.module.css';
 
 const Loja = () => {
@@ -21,7 +19,9 @@ const Loja = () => {
   const [resgatando, setResgatando] = useState(false);
   const [feedback, setFeedback] = useState(null);
 
-  const fecharConfirmacao = () => { if (!resgatando) setProdutoSelecionado(null); };
+  const fecharConfirmacao = () => {
+    if (!resgatando) setProdutoSelecionado(null);
+  };
 
   const handleConfirmarResgate = async () => {
     setResgatando(true);
@@ -31,7 +31,11 @@ const Loja = () => {
     } catch (err) {
       setFeedback({ variant: 'error', message: err.message });
     } finally {
-      await Promise.allSettled([atualizarSaldo(), recarregarProdutos({ silencioso: true }), recarregarResgates()]);
+      await Promise.allSettled([
+        atualizarSaldo(),
+        recarregarProdutos({ silencioso: true }),
+        recarregarResgates(),
+      ]);
       setResgatando(false);
       setProdutoSelecionado(null);
     }
@@ -39,17 +43,29 @@ const Loja = () => {
 
   return (
     <div className={styles.pageContainer}>
-      <Header />
+      {/* Barra superior estilo App (Título + Saldo) */}
+      <header className={styles.topBar}>
+        <div className={styles.topBarSpacer} />
+        <h1 className={styles.pageTitle}>Loja</h1>
+        <div className={styles.saldoBadge}>
+          <Trophy size={18} />
+          <span>{saldo}</span>
+        </div>
+      </header>
+
       <main className={styles.mainContent}>
+        {/* Banner mantendo a cor original e com texto resumido */}
         <section className={styles.bannerLoja}>
           <div className={styles.bannerInfo}>
-            <div className={styles.tagLoja}><Sparkles size={16} /><span>Loja de Recompensas</span></div>
+            <div className={styles.tagLoja}>
+              <Sparkles size={14} />
+              <span>Loja de Recompensas</span>
+            </div>
             <h2>Troque seus pontos por Brindes</h2>
-            <p>Sua participação nas salas do SENAI garante brindes! Resgate seu brinde abaixo e apresente-se na lojinha do SENAI para fazer a retirada.</p>
+            <p>Resgate abaixo e retire na lojinha do SENAI.</p>
           </div>
-          <div className={styles.saldoPill}>
-            <Trophy size={20} />
-            <div><small>Seu Saldo</small><br /><strong>{saldo} Pontos</strong></div>
+          <div className={styles.bannerIcon}>
+            <Trophy size={40} />
           </div>
         </section>
 
@@ -58,55 +74,101 @@ const Loja = () => {
         {error && (
           <div className={styles.errorBox}>
             <Alert variant="error">{error}</Alert>
-            <Button variant="outline" icon={RefreshCw} onClick={() => recarregarProdutos()}>Tentar novamente</Button>
+            <Button variant="outline" icon={RefreshCw} onClick={() => recarregarProdutos()}>
+              Tentar novamente
+            </Button>
           </div>
         )}
-        {!loading && !error && produtos.length === 0 && <Alert variant="info">Nenhum produto disponível no momento.</Alert>}
 
-        <section className={styles.productsGrid}>
-          {produtos.map((item) => {
-            const esgotado = item.estoque <= 0;
-            const podeResgatar = !esgotado && saldo >= item.pontos;
-            const rotulo = esgotado ? 'Esgotado' : podeResgatar ? 'Resgatar' : 'Pontos Insuficientes';
-            return (
-              <Card key={item.id} className={styles.productCard}>
-                <div className={styles.imagePlaceholder}><span className={styles.emojiImg}>{item.imagem}</span></div>
-                <div className={styles.productInfo}>
-                  <h4 className={styles.productName}>{item.nome}</h4>
-                  <div className={styles.pointsCost}><Trophy size={16} /><span>{item.pontos} Pontos</span></div>
-                  {!esgotado && <small className={styles.stockInfo}>{item.estoque} em estoque</small>}
-                </div>
-                <div className={styles.cardFooter}>
-                  <Button variant={podeResgatar ? 'primary' : 'outline'} fullWidth disabled={!podeResgatar} icon={Gift} onClick={() => { setFeedback(null); setProdutoSelecionado(item); }}>
-                    {rotulo}
-                  </Button>
-                </div>
-              </Card>
-            );
-          })}
+        {/* Seção 1: Grid compacto estilo "Your items" */}
+        <section className={styles.sectionBlock}>
+          <h3 className={styles.sectionTitle}>Brindes disponíveis</h3>
+
+          {!loading && !error && produtos.length === 0 && (
+            <Alert variant="info">Nenhum produto disponível no momento.</Alert>
+          )}
+
+          <div className={styles.itemsGrid}>
+            {produtos.map((item) => {
+              const esgotado = item.estoque <= 0;
+              const podeResgatar = !esgotado && saldo >= item.pontos;
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  disabled={!podeResgatar}
+                  className={`${styles.itemCard} ${!podeResgatar ? styles.itemDisabled : ''}`}
+                  onClick={() => {
+                    setFeedback(null);
+                    setProdutoSelecionado(item);
+                  }}
+                >
+                  <span className={styles.stockTag}>
+                    {esgotado ? 'Esgotado' : `${item.estoque} un.`}
+                  </span>
+
+                  <div className={styles.itemEmoji}>{item.imagem}</div>
+
+                  <span className={styles.itemName}>{item.nome}</span>
+
+                  <div className={`${styles.pointsPill} ${podeResgatar ? styles.pillActive : ''}`}>
+                    <Trophy size={13} />
+                    <span>{item.pontos}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </section>
 
-        <section className={styles.historySection}>
+        {/* Seção 2: Lista horizontal estilo "One-time rewards" */}
+        <section className={styles.sectionBlock}>
           <h3 className={styles.sectionTitle}>Meus Resgates</h3>
+
           {loadingResgates && <Alert variant="info">Carregando seus resgates...</Alert>}
           {errorResgates && <Alert variant="error">{errorResgates}</Alert>}
-          {!loadingResgates && !errorResgates && resgates.length === 0 && <p className={styles.emptyText}>Você ainda não resgatou nenhum brinde.</p>}
-          <ul className={styles.historyList}>
+          {!loadingResgates && !errorResgates && resgates.length === 0 && (
+            <p className={styles.emptyText}>Você ainda não resgatou nenhum brinde.</p>
+          )}
+
+          <div className={styles.rewardsList}>
             {[...resgates].reverse().map((resgate) => (
-              <li key={resgate.id} className={styles.historyItem}>
-                <span className={styles.historyEmoji}>{resgate.produtoImagem}</span>
-                <div className={styles.historyInfo}><strong>{resgate.produtoNome}</strong><small>{formatDate(resgate.criadoEm)}</small></div>
-                <span className={styles.historyPoints}>-{resgate.pontos} pts</span>
-              </li>
+              <div key={resgate.id} className={styles.rewardRow}>
+                <div className={styles.rewardIconBox}>
+                  <span>{resgate.produtoImagem}</span>
+                </div>
+
+                <div className={styles.rewardInfo}>
+                  <strong>{resgate.produtoNome}</strong>
+                  <small>{formatDate(resgate.criadoEm)}</small>
+                </div>
+
+                <span className={styles.rewardAction}>
+                  <CheckCircle2 size={15} /> -{resgate.pontos} pts
+                </span>
+              </div>
             ))}
-          </ul>
+          </div>
         </section>
       </main>
 
       <BottomNav />
 
-      <ConfirmModal isOpen={Boolean(produtoSelecionado)} title="Confirmar resgate" confirmLabel="Resgatar" loading={resgatando} onConfirm={handleConfirmarResgate} onCancel={fecharConfirmacao}>
-        {produtoSelecionado && <>Deseja trocar <strong>{produtoSelecionado.pontos} pontos</strong> por <strong>{produtoSelecionado.nome}</strong>?</>}
+      <ConfirmModal
+        isOpen={Boolean(produtoSelecionado)}
+        title="Confirmar resgate"
+        confirmLabel="Resgatar"
+        loading={resgatando}
+        onConfirm={handleConfirmarResgate}
+        onCancel={fecharConfirmacao}
+      >
+        {produtoSelecionado && (
+          <>
+            Deseja trocar <strong>{produtoSelecionado.pontos} pontos</strong> por{' '}
+            <strong>{produtoSelecionado.nome}</strong>?
+          </>
+        )}
       </ConfirmModal>
     </div>
   );

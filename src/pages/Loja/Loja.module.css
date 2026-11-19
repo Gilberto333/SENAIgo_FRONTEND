@@ -1,39 +1,240 @@
-.pageContainer { min-height: 100vh; background-color: var(--bg-light); }
-.mainContent { max-width: 1200px; margin: 0 auto; padding: 32px 24px; display: flex; flex-direction: column; gap: 32px; }
-.bannerLoja { background: linear-gradient(135deg, var(--terracotta), #8C2F12); border-radius: var(--radius-lg); padding: 32px; color: #ffffff; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
-.tagLoja { display: inline-flex; align-items: center; gap: 6px; background-color: rgba(255, 255, 255, 0.18); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; margin-bottom: 12px; }
-.saldoPill { background-color: #ffffff; color: var(--terracotta); padding: 12px 20px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow-soft); }
-.productsGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
-.productCard { display: flex; flex-direction: column; justify-content: space-between; text-align: center; }
-.imagePlaceholder { height: 120px; background-color: var(--bg-light); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
-.emojiImg { font-size: 3rem; }
-.productName { font-size: 1.1rem; font-weight: 700; color: var(--primary-blue); }
-.pointsCost { display: flex; align-items: center; justify-content: center; gap: 6px; color: #D97706; font-weight: 700; margin: 8px 0 16px 0; }
-.stockInfo { color: var(--text-muted); }
-.errorBox { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
-.historySection { display: flex; flex-direction: column; gap: 12px; }
-.sectionTitle { font-size: 1.15rem; font-weight: 700; color: var(--primary-blue); }
-.emptyText { color: var(--text-muted); font-size: 0.9rem; }
-.historyList { list-style: none; display: flex; flex-direction: column; gap: 10px; padding: 0; margin: 0; }
-.historyItem { display: flex; align-items: center; gap: 14px; background-color: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px 16px; }
-.historyEmoji { font-size: 1.6rem; }
-.historyInfo { flex: 1; display: flex; flex-direction: column; color: var(--primary-blue); }
-.historyInfo small { color: var(--text-muted); }
-.historyPoints { color: #D97706; font-weight: 700; }
-
-@media (max-width: 768px) {
-  .pageContainer { padding-bottom: 6.5rem; }
-  .mainContent { padding: 20px 16px; gap: 24px; }
-  .bannerLoja { flex-direction: column; align-items: stretch; padding: 24px 20px; gap: 20px; }
-  .bannerLoja h2 { font-size: 1.5rem; }
-  .saldoPill { justify-content: center; }
-  .productsGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .productsGrid .productCard { padding: 12px; min-width: 0; }
-  .imagePlaceholder { height: 84px; margin-bottom: 12px; }
-  .emojiImg { font-size: 2.4rem; }
-  .productName { font-size: 0.95rem; }
+.pageContainer {
+  min-height: 100vh;
+  background-color: #ffffff;
+  padding-bottom: 84px;
 }
 
-@media (max-width: 380px) {
-  .productsGrid { grid-template-columns: 1fr; }
+/* Topo limpo */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 2px solid #f0e6e1;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topBarSpacer {
+  width: 64px;
+}
+
+.pageTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #3c3c3c;
+  margin: 0;
+}
+
+.saldoBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+  color: #b84a27;
+  font-size: 1rem;
+}
+
+.mainContent {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Banner mantendo o tom terracota da imagem original */
+.bannerLoja {
+  background: linear-gradient(135deg, #b84a27 0%, #96381b 100%);
+  border-radius: 18px;
+  padding: 18px 20px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tagLoja {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.bannerInfo h2 {
+  margin: 0 0 4px 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.bannerInfo p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.bannerIcon {
+  color: rgba(255, 255, 255, 0.85);
+  flex-shrink: 0;
+}
+
+/* Seções */
+.sectionBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sectionTitle {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #3c3c3c;
+  margin: 0;
+}
+
+/* Grid de 3 colunas ("Your items") */
+.itemsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.itemCard {
+  background: #fff;
+  border: 2px solid #e5e5e5;
+  border-bottom-width: 4px;
+  border-radius: 16px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.1s ease, border-color 0.15s ease;
+}
+
+.itemCard:not(:disabled):active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.itemCard:not(:disabled):hover {
+  border-color: #b84a27;
+}
+
+.itemDisabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.stockTag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #9ca3af;
+}
+
+.itemEmoji {
+  font-size: 2.3rem;
+  line-height: 1;
+}
+
+.itemName {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #3c3c3c;
+  text-align: center;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pointsPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  background-color: #f3f4f6;
+  color: #777777;
+}
+
+.pillActive {
+  background-color: #fdf0eb;
+  color: #b84a27;
+}
+
+/* Lista horizontal ("One-time rewards") */
+.rewardsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rewardRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border: 2px solid #e5e5e5;
+  border-bottom-width: 4px;
+  border-radius: 16px;
+  padding: 12px 16px;
+}
+
+.rewardIconBox {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #fdf0eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.rewardInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rewardInfo strong {
+  font-size: 0.95rem;
+  color: #3c3c3c;
+}
+
+.rewardInfo small {
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.rewardAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #b84a27;
+}
+
+.emptyText {
+  color: #777;
+  font-size: 0.9rem;
+  margin: 0;
 }
