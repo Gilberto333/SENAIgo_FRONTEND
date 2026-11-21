@@ -1,0 +1,245 @@
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 5.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #16325c;
+}
+
+.subtitulo {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #64748b;
+}
+
+.alertaErro {
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 0.9rem;
+}
+
+.alertaSucesso {
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+  font-size: 0.9rem;
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.cardTitulo {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.formLinha {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.formColuna {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.95rem;
+  color: #0f172a;
+  background-color: #f8fafc;
+  outline: none;
+  transition: border-color 0.2s, background-color 0.2s;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #1d4ed8;
+  background-color: #ffffff;
+}
+
+.inputCodigo {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.botaoPrimario {
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 10px;
+  background-color: #e65100;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.botaoPrimario:hover:not(:disabled) {
+  background-color: #cc4700;
+}
+
+.botaoPrimario:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.botaoSecundario {
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 10px;
+  background-color: #16325c;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.botaoSecundario:hover:not(:disabled) {
+  background-color: #1e4278;
+}
+
+.botaoSecundario:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.listaEventos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.itemEvento {
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.itemEventoAtivo {
+  border: 2px solid #16325c;
+  background-color: #eff6ff;
+}
+
+.eventoInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.eventoNome {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.eventoCodigo {
+  font-size: 0.82rem;
+  color: #475569;
+}
+
+.badgeCodigo {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  background-color: #e2e8f0;
+  color: #1e293b;
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.eventoDescricao {
+  margin: 0.2rem 0 0;
+  font-size: 0.88rem;
+  color: #64748b;
+}
+
+.botaoSelecionar {
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #16325c;
+  background-color: #ffffff;
+  color: #16325c;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.botaoSelecionar:hover {
+  background-color: #16325c;
+  color: #ffffff;
+}
+
+.botaoAtivo {
+  background-color: #16325c;
+  color: #ffffff;
+}
+
+.estadoVazio {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #64748b;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+@media (max-width: 480px) {
+  .formLinha {
+    flex-direction: column;
+  }
+
+  .itemEvento {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .botaoSelecionar {
+    width: 100%;
+    text-align: center;
+  }
+}

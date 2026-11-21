@@ -9,18 +9,25 @@ import styles from './SalaFormModal.module.css';
 
 const isIntegerText = (value) => value.trim() !== '' && Number.isInteger(Number(value));
 
-const validate = ({ sala, pontos }) => {
+const validate = ({ sala, descricao, pontos }) => {
   const errors = {};
-  if (sala.trim().length < 3) errors.sala = 'O nome deve ter pelo menos 3 caracteres.';
-  if (!isIntegerText(pontos) || Number(pontos) < 1) errors.pontos = 'Informe um número inteiro maior que zero.';
+  if (sala.trim().length < 3) {
+    errors.sala = 'O nome deve ter pelo menos 3 caracteres.';
+  }
+  if (descricao.trim().length > 120) {
+    errors.descricao = 'A descrição pode ter no máximo 120 caracteres.';
+  }
+  if (!isIntegerText(pontos) || Number(pontos) < 1) {
+    errors.pontos = 'Informe um número inteiro maior que zero.';
+  }
   return errors;
 };
 
 const SalaForm = ({ sala, onSubmit, onCancel }) => {
   const [form, setForm] = useState({
-    sala: sala?.sala ?? '',
+    sala: sala?.sala ?? sala?.nome ?? '',
     descricao: sala?.descricao ?? '',
-    pontos: sala?.pontos?.toString() ?? '',
+    pontos: sala?.pontos !== undefined && sala?.pontos !== null ? String(sala.pontos) : '',
     icone: sala?.icone ?? 'map-pin',
     ativa: sala?.ativa ?? true,
   });
@@ -29,7 +36,8 @@ const SalaForm = ({ sala, onSubmit, onCancel }) => {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (field) => (e) => {
-    setForm((prev) => ({ ...prev, [field]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }));
+    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+    setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: '' }));
     setSubmitError('');
   };
@@ -43,6 +51,7 @@ const SalaForm = ({ sala, onSubmit, onCancel }) => {
     }
 
     setLoading(true);
+    setSubmitError('');
     try {
       await onSubmit({
         sala: form.sala.trim(),
@@ -52,43 +61,110 @@ const SalaForm = ({ sala, onSubmit, onCancel }) => {
         ativa: form.ativa,
       });
     } catch (err) {
-      setSubmitError(err.message);
+      setSubmitError(
+        err?.response?.data?.erro ||
+          err?.response?.data?.mensagem ||
+          err?.message ||
+          'Não foi possível salvar a sala.'
+      );
+    } finally {
       setLoading(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className={styles.form} noValidate>
-      <Input id="sala-nome" label="Nome da sala" placeholder="Ex.: Eletrônica" value={form.sala} onChange={handleChange('sala')} error={errors.sala} icon={DoorOpen} required />
-      <Input id="sala-descricao" label="Descrição" placeholder="Ex.: Laboratório de Eletrônica" value={form.descricao} onChange={handleChange('descricao')} error={errors.descricao} icon={AlignLeft} maxLength={120} />
+      <Input
+        id="sala-nome"
+        label="Nome da sala"
+        placeholder="Ex.: Eletrônica"
+        value={form.sala}
+        onChange={handleChange('sala')}
+        error={errors.sala}
+        icon={DoorOpen}
+        required
+      />
+      <Input
+        id="sala-descricao"
+        label="Descrição"
+        placeholder="Ex.: Laboratório de Eletrônica"
+        value={form.descricao}
+        onChange={handleChange('descricao')}
+        error={errors.descricao}
+        icon={AlignLeft}
+        maxLength={120}
+      />
       <div className={styles.row}>
-        <Input id="sala-pontos" type="number" min="1" label="Pontos" placeholder="5" value={form.pontos} onChange={handleChange('pontos')} error={errors.pontos} icon={Trophy} required />
+        <Input
+          id="sala-pontos"
+          type="number"
+          min="1"
+          label="Pontos"
+          placeholder="5"
+          value={form.pontos}
+          onChange={handleChange('pontos')}
+          error={errors.pontos}
+          icon={Trophy}
+          required
+        />
         <div className={styles.field}>
           <label htmlFor="sala-icone" className={styles.label}>Ícone</label>
-          <select id="sala-icone" className={styles.select} value={form.icone} onChange={handleChange('icone')}>
-            {ICON_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+          <select
+            id="sala-icone"
+            className={styles.select}
+            value={form.icone}
+            onChange={handleChange('icone')}
+          >
+            {ICON_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </div>
       </div>
       {sala && (
         <label className={styles.checkbox}>
-          <input type="checkbox" checked={form.ativa} onChange={handleChange('ativa')} />
+          <input
+            type="checkbox"
+            checked={form.ativa}
+            onChange={handleChange('ativa')}
+          />
           <span>Sala ativa (visível para os alunos)</span>
         </label>
       )}
       {submitError && <Alert variant="error">{submitError}</Alert>}
       <div className={styles.actions}>
-        <Button variant="outline" onClick={onCancel} disabled={loading}>Cancelar</Button>
-        <Button type="submit" loading={loading}>{sala ? 'Salvar alterações' : 'Cadastrar sala'}</Button>
+        <Button variant="outline" onClick={onCancel} disabled={loading}>
+          Cancelar
+        </Button>
+        <Button type="submit" loading={loading}>
+          {sala ? 'Salvar alterações' : 'Cadastrar sala'}
+        </Button>
       </div>
     </form>
   );
 };
 
-const SalaFormModal = ({ isOpen, sala = null, onSubmit, onClose }) => (
-  <Modal isOpen={isOpen} onClose={onClose} title={sala ? 'Editar sala' : 'Nova sala'}>
-    <SalaForm sala={sala} onSubmit={onSubmit} onCancel={onClose} />
-  </Modal>
-);
+const SalaFormModal = ({ isOpen, sala = null, onSubmit, onClose }) => {
+  const formKey = sala ? `edit-${sala.salaId ?? sala.id}` : 'new-sala';
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={sala ? 'Editar sala' : 'Nova sala'}
+    >
+      {isOpen && (
+        <SalaForm
+          key={formKey}
+          sala={sala}
+          onSubmit={onSubmit}
+          onCancel={onClose}
+        />
+      )}
+    </Modal>
+  );
+};
 
 export default SalaFormModal;
